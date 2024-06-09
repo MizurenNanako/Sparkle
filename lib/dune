@@ -1,0 +1,34 @@
+(library
+ (name common)
+ (modules common))
+
+(library
+ (name lexical)
+ (modules lexical)
+ (preprocess
+  (pps ppx_sexp_conv))
+ (libraries sexplib))
+
+(ocamllex lexer)
+
+(library
+ (name lexer)
+ (modules lexer)
+ (libraries lexical))
+
+(library
+ (name syntactics)
+ (modules syntactics)
+ (preprocess
+  (pps ppx_sexp_conv))
+ (libraries lexical sexplib))
+
+(menhir
+ (modules parser)
+ (flags --dump --external-tokens=Lexical.Token --table)
+ (infer true))
+
+(library
+ (name parser)
+ (modules parser)
+ (libraries common lexical syntactics menhirLib))

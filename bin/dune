@@ -1,0 +1,4 @@
+(executable
+ (public_name mlisp)
+ (name main)
+ (libraries lexer parser))
