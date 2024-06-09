@@ -104,7 +104,15 @@ cond_expr:
 }
 | e = call_expr { e }
 
-cond:
+cond: c = cond_rev; 
+{
+    {
+        c with
+        cond_branch = List.rev c.cond_branch
+    }
+}
+
+cond_rev:
 | c = cond_;
 {
     {
@@ -112,7 +120,7 @@ cond:
         cond_rng = Range.join c.branch_pred.expr_rng c.branch_expr.expr_rng;
     }
 }
-| l = cond; "|"; c = cond_;
+| l = cond_rev; "|"; c = cond_;
 {
     {
         cond_branch = c :: l.cond_branch;

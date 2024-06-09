@@ -3,3 +3,4 @@ let rec tail l =
   | [] -> raise @@ Failure "tail"
   | [ a ] -> a
   | _ :: tl -> tail tl
+;;

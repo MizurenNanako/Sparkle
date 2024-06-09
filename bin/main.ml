@@ -13,8 +13,8 @@ let () =
       raise e
   in
   astl
-  |> List.map Syntactics.AST.sexp_of_expr
-  |> List.iter (Sexplib.Sexp.output_hum stdout)
+  (* |> List.map Syntactics.AST.sexp_of_expr *)
+  |> Syntactics.Format.fmt stdout
   |> print_newline
 ;;
 

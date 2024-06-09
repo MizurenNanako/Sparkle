@@ -63,3 +63,137 @@ module AST = struct
 
   and type_expr_desc = TIdAtom of id
 end
+
+module Format = struct
+  open AST
+
+  let rec pad out n =
+    match n with
+    | 0 -> ()
+    | n ->
+      Printf.fprintf out "  ";
+      n |> pred |> pad out
+  ;;
+
+  let rec fmt out (a : expr list) = List.iter (fmt_expr 0 out) a
+
+  and fmt_expr level (out : out_channel) e =
+    let { expr_desc; _ } = e in
+    match expr_desc with
+    | BindExpr e -> fmt_bind level out e
+    | CallExpr e -> fmt_call level out e
+    | CondExpr e -> fmt_cond level out e
+    | LambdaExpr e -> fmt_lambda level out e
+    | (IdAtom _ as e)
+    | (F64Atom _ as e)
+    | (I64Atom _ as e)
+    | (StrAtom _ as e) -> fmt_atom out e
+
+  and fmt_atom out a =
+    let open Printf in
+    match a with
+    | IdAtom i -> fprintf out "%s" i
+    | I64Atom i -> fprintf out "%s" (Int64.to_string i)
+    | F64Atom i -> fprintf out "%f" i
+    | StrAtom i -> fprintf out "\"%s\"" (String.escaped i)
+    | _ -> assert false
+
+  and fmt_bind level out e =
+    let { bind_name; bind_value; bind_ctx } = e in
+    Printf.fprintf
+      out
+      "%s := %a\n%a=> %a"
+      bind_name
+      (fmt_expr level)
+      bind_value
+      pad
+      level
+      (fmt_expr level)
+      bind_ctx
+
+  and fmt_call level out e =
+    let { call_expr_callee; call_expr_param } = e in
+    Printf.fprintf
+      out
+      "%a[%a]"
+      (fmt_expr level)
+      call_expr_callee
+      (fmt_args level)
+      call_expr_param
+
+  and fmt_args level out e =
+    match e with
+    | [] -> ()
+    | [ a ] -> Printf.fprintf out "%a" (fmt_expr level) a
+    | a :: tl ->
+      Printf.fprintf out "%a, " (fmt_expr level) a;
+      fmt_args level out tl
+
+  and fmt_cond level out e =
+    let { cond_branch; _ } = e in
+    Printf.fprintf
+      out
+      "\n%a  %a"
+      pad
+      level
+      (fmt_branches level)
+      cond_branch
+
+  and fmt_branches level out bl =
+    match bl with
+    | [] -> ()
+    | [ { branch_pred; branch_expr } ] ->
+      Printf.fprintf
+        out
+        "%a -> %a"
+        (fmt_expr level)
+        branch_pred
+        (fmt_expr level)
+        branch_expr
+    | { branch_pred; branch_expr } :: tl ->
+      Printf.fprintf
+        out
+        "%a -> %a\n%a| "
+        (fmt_expr level)
+        branch_pred
+        (fmt_expr level)
+        branch_expr
+        pad
+        level;
+      fmt_branches level out tl
+
+  and fmt_lambda level out e =
+    let { lambda_param; lambda_expr } = e in
+    Printf.fprintf
+      out
+      "(%a) -> %a"
+      fmt_param
+      lambda_param
+      (fmt_expr (level + 1))
+      lambda_expr
+
+  and fmt_param out pl =
+    match pl with
+    | [] -> ()
+    | [ { param_item_id; param_item_type } ] ->
+      Printf.fprintf
+        out
+        "%s: %a"
+        param_item_id
+        fmt_type_expr
+        param_item_type
+    | { param_item_id; param_item_type } :: tl ->
+      Printf.fprintf
+        out
+        "%s: %a, "
+        param_item_id
+        fmt_type_expr
+        param_item_type;
+      fmt_param out tl
+
+  and fmt_type_expr out ty =
+    let { type_expr_desc; _ } = ty in
+    match type_expr_desc with
+    | TIdAtom s -> Printf.fprintf out "%s" s
+  ;;
+end
