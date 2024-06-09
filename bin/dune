@@ -1,4 +1,4 @@
 (executable
- (public_name mlisp)
+ (public_name spml)
  (name main)
  (libraries lexer parser))

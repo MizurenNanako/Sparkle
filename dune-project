@@ -5,7 +5,7 @@
 (name mlisp)
 
 (source
- (github mizurennanako/mlisp))
+ (github mizurennanako/spml))
 
 (authors "Cherry Sigma")
 
@@ -16,5 +16,5 @@
 (package
  (name mlisp)
  (synopsis "mlisp")
- (description "M-Expr based LISP")
+ (description "Sparkle is an M-Expr based LISP")
  (depends ocaml dune menhirLib ppx_sexp_conv sexplib))
