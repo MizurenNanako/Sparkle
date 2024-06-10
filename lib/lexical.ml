@@ -10,14 +10,14 @@ module Range = struct
       if a.pos_lnum = b.pos_lnum
       then
         sprintf
-          "\"%s\":%i:%i-%i"
+          "%s:%i:%i-%i"
           a.pos_fname
           a.pos_lnum
           (a.pos_cnum - a.pos_bol + 1)
           (b.pos_cnum - b.pos_bol + 1)
       else
         sprintf
-          "\"%s\":%i:%i-%i:%i"
+          "%s:%i:%i-%i:%i"
           a.pos_fname
           a.pos_lnum
           (a.pos_cnum - a.pos_bol + 1)
@@ -25,7 +25,7 @@ module Range = struct
           (b.pos_cnum - b.pos_bol + 1)
     else
       sprintf
-        "\"%s\":%i:%i-\"%s\":%i:%i"
+        "%s:%i:%i-%s:%i:%i"
         a.pos_fname
         a.pos_lnum
         (a.pos_cnum - a.pos_bol + 1)
@@ -62,6 +62,7 @@ module Token = struct
     | Tlc of pos
     | Trc of pos
     | Tcomma of pos
+    (* | Tquest of pos *)
     (* | Tsemi of pos *)
     | Tbind of pos
     | Tto of pos
@@ -82,6 +83,7 @@ module Token = struct
     | Tlc _ -> "{"
     | Trc _ -> "}"
     | Tcomma _ -> ","
+    (* | Tquest _ -> ";" *)
     (* | Tsemi _ -> ";" *)
     | Tbind _ -> ":="
     | Tto _ -> "->"
@@ -102,6 +104,7 @@ module Token = struct
     | Trp p
     | Tlc p
     | Trc p
+    (* | Tquest p *)
     (* | Tsemi p *)
     | Tcomma p -> p, { p with pos_cnum = p.pos_cnum + 1 }
     | Tbind p | Tto p | Tin p ->

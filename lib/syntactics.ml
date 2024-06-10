@@ -83,9 +83,7 @@ module Format = struct
       n |> pred |> pad out
   ;;
 
-  let rec fmt out (a : expr list) = List.iter (fmt_expr 0 out) a
-
-  and fmt_expr level (out : out_channel) e =
+  let rec fmt_expr level (out : out_channel) e =
     let { expr_desc; _ } = e in
     match expr_desc with
     | BindExpr e -> fmt_bind level out e
@@ -224,5 +222,13 @@ module Format = struct
   and fmt_decl out e =
     let { decl_name; decl_type } = e in
     Printf.fprintf out "%s: %a\n" decl_name fmt_type_expr decl_type
+  ;;
+
+  let rec fmt out (a : expr list) =
+    match a with
+    | [] -> ()
+    | a :: tl ->
+      Printf.fprintf out "# entry\n%a\n" (fmt_expr 0) a;
+      fmt out tl
   ;;
 end

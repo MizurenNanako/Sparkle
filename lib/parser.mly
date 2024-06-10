@@ -12,6 +12,7 @@
 %token <Range.pos> Tlc "{"
 %token <Range.pos> Trc "}"
 %token <Range.pos> Tcomma ","
+// %token <Range.pos> Tquest "?"
 // %token <Range.pos> Tsemi ","
 
 %token <Range.pos> Tbind ":="
@@ -30,26 +31,27 @@
 %%
 
 start:
-| l = expr_*; Teof; { l }
+| l = top_expr*; Teof; { l }
 
-expr_:
+top_expr:
 | a = expr; { a }
 | b = decl_expr; { b }
 
 expr:
 | a = bind_expr; { a }
+| b = lambda_expr; { b }
 
 call_expr:
 |   callee = call_expr; "["; 
     param = separated_list(",", call_expr); 
-    posR = "]";
+    p = "]";
 {
     {
         expr_desc = CallExpr {
             call_expr_callee = callee;
             call_expr_param = param;
         };
-        expr_rng = snd callee.expr_rng, posR;
+        expr_rng = fst callee.expr_rng, { p with pos_cnum = p.pos_cnum + 1 };
     }
 }
 | e = primary_expr { e }
@@ -86,7 +88,7 @@ primary_expr:
 | "("; e = expr; ")"; { e }
 
 bind_expr:
-| a = id; ":="; e1 = expr; "=>"; e2 = lambda_expr;
+| a = id; ":="; e1 = expr; "=>"; e2 = expr;
 {
     {
         expr_desc = BindExpr {
@@ -97,7 +99,7 @@ bind_expr:
         expr_rng = Range.join (snd a) e2.expr_rng;
     }
 }
-| e = lambda_expr { e }
+// | e = lambda_expr { e }
 
 cond_expr:
 | cd = cond;
@@ -143,7 +145,7 @@ cond_:
 }
 
 lambda_expr:
-| posL = "("; p = separated_list(",", param_); ")"; "->"; e = cond_expr;
+| posL = "("; p = separated_list(",", param_); ")"; "->"; e = expr;
 {
     {
         expr_desc = LambdaExpr {
