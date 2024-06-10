@@ -37,8 +37,10 @@ module Checking = struct
          @@ TypeError
               (Printf.sprintf "Undefined id: %s" id, a.A.expr_rng))
     | BindExpr b -> _bind a.expr_rng env b
+    | TopBindExpr b -> _top_bind a.expr_rng env b
     | LambdaExpr l -> _lambda a.expr_rng env l
     | DeclExpr d -> _decl a.expr_rng env d
+    | LocalDeclExpr d -> _local_decl a.expr_rng env d
     | CallExpr c -> _call a.expr_rng env c
     | CondExpr c -> _branch a.expr_rng env c.cond_branch
 
@@ -64,6 +66,12 @@ module Checking = struct
     let env' = (bnd.bind_name, ty) :: env in
     let rety = _expr' env' bnd.bind_ctx in
     rety, env
+
+  and _top_bind rng env bnd =
+    ignore rng;
+    let ty = _expr' env bnd.top_bind_value in
+    let env' = (bnd.top_bind_name, ty) :: env in
+    M.Munit, env'
 
   and _branch rng env brl =
     ignore rng;
@@ -128,6 +136,25 @@ module Checking = struct
     match ty with
     | M.Merr -> raise @@ TypeError ("Invaild type", rng)
     | _ -> M.Munit, (name, ty) :: env
+
+  and _local_decl rng env d =
+    let name = d.local_decl_name in
+    let ty = M.Msig (_type d.local_decl_type) in
+    match ty with
+    | M.Merr -> raise @@ TypeError ("Invaild type", rng)
+    | _ ->
+      let env' = (name, ty) :: env in
+      let ty', _ = _expr env' d.local_decl_ctx in
+      (* let ty', env' = _expr env' d.local_decl_ctx in *)
+      (* before leave, check the local def is satisfied or not *)
+      (* (match List.assoc_opt name env' with
+       | None -> assert false
+       | Some (M.Msig _) ->
+         raise
+         @@ TypeError ("Local declaration not satisfied in scope", rng)
+       | Some _ ->  *)
+        ty', env
+       (* ) *)
   ;;
 
   let check_module (astl : A.expr list) : env =

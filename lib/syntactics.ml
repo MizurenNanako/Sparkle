@@ -17,6 +17,7 @@ module AST = struct
 
   and expr_desc =
     | BindExpr of bind_expr_desc
+    | TopBindExpr of top_bind_expr_desc
     | LambdaExpr of lambda_expr_desc
     | CondExpr of cond_expr_desc
     | CallExpr of call_expr_desc
@@ -25,6 +26,7 @@ module AST = struct
     | StrAtom of str
     | IdAtom of id
     | DeclExpr of decl_expr_desc
+    | LocalDeclExpr of local_decl_expr_desc
 
   and call_expr_desc =
     { call_expr_callee : expr
@@ -35,6 +37,11 @@ module AST = struct
     { bind_name : id
     ; bind_value : expr
     ; bind_ctx : expr
+    }
+
+  and top_bind_expr_desc =
+    { top_bind_name : id
+    ; top_bind_value : expr
     }
 
   and lambda_expr_desc =
@@ -70,6 +77,12 @@ module AST = struct
     { decl_name : id
     ; decl_type : type_expr
     }
+
+  and local_decl_expr_desc =
+    { local_decl_name : id
+    ; local_decl_type : type_expr
+    ; local_decl_ctx : expr
+    }
 end
 
 module Format = struct
@@ -87,6 +100,7 @@ module Format = struct
     let { expr_desc; _ } = e in
     match expr_desc with
     | BindExpr e -> fmt_bind level out e
+    | TopBindExpr e -> fmt_top_bind level out e
     | CallExpr e -> fmt_call level out e
     | CondExpr e -> fmt_cond level out e
     | LambdaExpr e -> fmt_lambda level out e
@@ -95,6 +109,7 @@ module Format = struct
     | (I64Atom _ as e)
     | (StrAtom _ as e) -> fmt_atom out e
     | DeclExpr e -> fmt_decl out e
+    | LocalDeclExpr e -> fmt_local_decl level out e
 
   and fmt_atom out a =
     let open Printf in
@@ -117,6 +132,15 @@ module Format = struct
       level
       (fmt_expr level)
       bind_ctx
+
+  and fmt_top_bind level out e =
+    let { top_bind_name; top_bind_value } = e in
+    Printf.fprintf
+      out
+      "%s := %a"
+      top_bind_name
+      (fmt_expr level)
+      top_bind_value
 
   and fmt_call level out e =
     let { call_expr_callee; call_expr_param } = e in
@@ -222,6 +246,17 @@ module Format = struct
   and fmt_decl out e =
     let { decl_name; decl_type } = e in
     Printf.fprintf out "%s: %a\n" decl_name fmt_type_expr decl_type
+
+  and fmt_local_decl level out e =
+    let { local_decl_name; local_decl_type; local_decl_ctx } = e in
+    Printf.fprintf
+      out
+      "%s: %a =>\n%a"
+      local_decl_name
+      fmt_type_expr
+      local_decl_type
+      (fmt_expr level)
+      local_decl_ctx
   ;;
 
   let rec fmt out (a : expr list) =

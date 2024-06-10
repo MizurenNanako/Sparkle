@@ -36,10 +36,63 @@ start:
 top_expr:
 | a = expr; { a }
 | b = decl_expr; { b }
+| c = top_bind_expr; { c }
 
 expr:
-| a = bind_expr; { a }
+// | a = bind_expr; { a }
 | b = lambda_expr; { b }
+| c = local_decl_expr; { c }
+
+top_bind_expr:
+| a = id; ":="; e = expr;
+{
+    {
+        expr_desc = TopBindExpr {
+            top_bind_name = fst a;
+            top_bind_value = e;
+        };
+        expr_rng = Range.join (snd a) e.expr_rng;
+    }
+}
+
+decl_expr:
+| a = id; ":"; te = type_expr;
+{
+    {
+        expr_desc = DeclExpr {
+            decl_name = fst a;
+            decl_type = te;
+        };
+        expr_rng = Range.join (snd a) te.type_expr_rng;
+    }
+}
+
+local_decl_expr:
+| a = id; ":"; te = type_expr; "=>"; e = local_decl_expr;
+{
+    {
+        expr_desc = LocalDeclExpr {
+            local_decl_name = fst a;
+            local_decl_type = te;
+            local_decl_ctx = e;
+        };
+        expr_rng = Range.join (snd a) e.expr_rng
+    }
+}
+| b = bind_expr; { b }
+
+bind_expr:
+| a = id; ":="; e1 = expr; "=>"; e2 = expr;
+{
+    {
+        expr_desc = BindExpr {
+            bind_name = fst a;
+            bind_value = e1;
+            bind_ctx = e2;
+        };
+        expr_rng = Range.join (snd a) e2.expr_rng;
+    }
+}
 
 call_expr:
 |   callee = call_expr; "["; 
@@ -86,20 +139,6 @@ primary_expr:
     }
 }
 | "("; e = expr; ")"; { e }
-
-bind_expr:
-| a = id; ":="; e1 = expr; "=>"; e2 = expr;
-{
-    {
-        expr_desc = BindExpr {
-            bind_name = fst a;
-            bind_value = e1;
-            bind_ctx = e2;
-        };
-        expr_rng = Range.join (snd a) e2.expr_rng;
-    }
-}
-// | e = lambda_expr { e }
 
 cond_expr:
 | cd = cond;
@@ -180,18 +219,6 @@ type_expr:
     {
         type_expr_desc = TLambda (pa, ret);
         type_expr_rng = posL, snd ret.type_expr_rng;
-    }
-}
-
-decl_expr:
-| a = id; ":"; te = type_expr;
-{
-    {
-        expr_desc = DeclExpr {
-            decl_name = fst a;
-            decl_type = te;
-        };
-        expr_rng = Range.join (snd a) te.type_expr_rng;
     }
 }
 
