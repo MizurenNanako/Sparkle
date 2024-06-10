@@ -12,6 +12,7 @@
 %token <Range.pos> Tlc "{"
 %token <Range.pos> Trc "}"
 %token <Range.pos> Tcomma ","
+// %token <Range.pos> Tsemi ","
 
 %token <Range.pos> Tbind ":="
 %token <Range.pos> Tto "->"
@@ -29,7 +30,11 @@
 %%
 
 start:
-| l = expr*; Teof; { l }
+| l = expr_*; Teof; { l }
+
+expr_:
+| a = expr; { a }
+| b = decl_expr; { b }
 
 expr:
 | a = bind_expr; { a }
@@ -165,6 +170,25 @@ type_expr:
     {
         type_expr_desc = TIdAtom (fst a);
         type_expr_rng = snd a;
+    }
+}
+| posL = "("; pa = separated_list(",", type_expr); ")"; "->"; ret = type_expr;
+{
+    {
+        type_expr_desc = TLambda (pa, ret);
+        type_expr_rng = posL, snd ret.type_expr_rng;
+    }
+}
+
+decl_expr:
+| a = id; ":"; te = type_expr;
+{
+    {
+        expr_desc = DeclExpr {
+            decl_name = fst a;
+            decl_type = te;
+        };
+        expr_rng = Range.join (snd a) te.type_expr_rng;
     }
 }
 

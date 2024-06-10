@@ -25,6 +25,7 @@ let exponent      = ['e' 'E' 'p' 'P'] ['+' '-']? ['0'-'9']+
 let literal_real  = (significand exponent? | wholenumber exponent)
 
 rule get_token = parse
+| '#' [^ '\n']* { get_token lexbuf }
 | [' ' '\t']+ { get_token lexbuf }
 | '\n' { Lexing.new_line lexbuf; get_token lexbuf }
 | "\"" 
@@ -37,6 +38,7 @@ rule get_token = parse
 }
 | "|" { Tbar lexbuf.lex_start_p }
 | ":" { Tcolon lexbuf.lex_start_p }
+(* | ";" { Tsemi lexbuf.lex_start_p } *)
 | "[" { Tlb lexbuf.lex_start_p }
 | "]" { Trb lexbuf.lex_start_p }
 | "(" { Tlp lexbuf.lex_start_p }

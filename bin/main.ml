@@ -12,10 +12,7 @@ let () =
       |> print_newline;
       raise e
   in
-  astl
-  (* |> List.map Syntactics.AST.sexp_of_expr *)
-  |> Syntactics.Format.fmt stdout
-  |> print_newline
+  astl |> Syntactics.Format.fmt stdout |> print_newline
 ;;
 
 (* let () =

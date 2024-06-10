@@ -24,6 +24,7 @@ module AST = struct
     | F64Atom of f64
     | StrAtom of str
     | IdAtom of id
+    | DeclExpr of decl_expr_desc
 
   and call_expr_desc =
     { call_expr_callee : expr
@@ -61,7 +62,14 @@ module AST = struct
     ; type_expr_rng : range
     }
 
-  and type_expr_desc = TIdAtom of id
+  and type_expr_desc =
+    | TIdAtom of id
+    | TLambda of type_expr list * type_expr
+
+  and decl_expr_desc =
+    { decl_name : id
+    ; decl_type : type_expr
+    }
 end
 
 module Format = struct
@@ -88,6 +96,7 @@ module Format = struct
     | (F64Atom _ as e)
     | (I64Atom _ as e)
     | (StrAtom _ as e) -> fmt_atom out e
+    | DeclExpr e -> fmt_decl out e
 
   and fmt_atom out a =
     let open Printf in
@@ -195,5 +204,25 @@ module Format = struct
     let { type_expr_desc; _ } = ty in
     match type_expr_desc with
     | TIdAtom s -> Printf.fprintf out "%s" s
+    | TLambda (param, ret) ->
+      Printf.fprintf
+        out
+        "(%a) -> %a"
+        fmt_type_list
+        param
+        fmt_type_expr
+        ret
+
+  and fmt_type_list out tyl =
+    match tyl with
+    | [] -> ()
+    | [ a ] -> Printf.fprintf out "%a" fmt_type_expr a
+    | a :: tl ->
+      Printf.fprintf out "%a, " fmt_type_expr a;
+      fmt_type_list out tl
+
+  and fmt_decl out e =
+    let { decl_name; decl_type } = e in
+    Printf.fprintf out "%s: %a\n" decl_name fmt_type_expr decl_type
   ;;
 end

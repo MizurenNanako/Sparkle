@@ -32,3 +32,13 @@
  (name parser)
  (modules parser)
  (libraries common lexical syntactics menhirLib))
+
+(library
+ (name typing)
+ (modules typing)
+ (libraries common))
+
+(library
+ (name semantics)
+ (modules semantics)
+ (libraries syntactics typing))
