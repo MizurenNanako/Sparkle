@@ -145,7 +145,8 @@ cond_:
 }
 
 lambda_expr:
-| posL = "("; p = separated_list(",", param_); ")"; "->"; e = expr;
+| posL = "("; p = separated_list(",", param_); ")"; 
+    "->"; e = expr;
 {
     {
         expr_desc = LambdaExpr {

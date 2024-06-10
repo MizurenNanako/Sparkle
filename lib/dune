@@ -36,9 +36,13 @@
 (library
  (name typing)
  (modules typing)
- (libraries common))
+ (preprocess
+  (pps ppx_sexp_conv))
+ (libraries common sexplib))
 
 (library
  (name semantics)
  (modules semantics)
- (libraries syntactics typing))
+ (preprocess
+  (pps ppx_sexp_conv))
+ (libraries syntactics typing sexplib))

@@ -12,11 +12,24 @@ let () =
       |> print_newline;
       raise e
   in
-  (* astl |> Syntactics.Format.fmt stdout |> print_newline *)
-  astl
-  |> List.map Syntactics.AST.sexp_of_expr
-  |> List.iter (Sexplib.Sexp.output_hum stdout)
-  |> print_newline
+  (* astl |> Syntactics.Format.fmt stdout |> print_newline; *)
+  (* astl
+     |> List.map Syntactics.AST.sexp_of_expr
+     |> List.iter (Sexplib.Sexp.output_hum stdout)
+     |> print_newline *)
+  try
+    astl
+    |> Semantics.Checking.check_module
+    |> Semantics.Checking.sexp_of_env
+    |> Sexplib.Sexp.output_hum stdout
+    |> print_newline
+  with
+  | Semantics.Checking.TypeError (msg, rng) ->
+    Printf.eprintf
+      "SemanticError: %s at %a\n"
+      msg
+      Lexical.Range.dump
+      rng
 ;;
 
 (* let () =
