@@ -62,6 +62,7 @@ module Token = struct
     | Tlc of pos
     | Trc of pos
     | Tcomma of pos
+    | Teq of pos
     (* | Tquest of pos *)
     (* | Tsemi of pos *)
     | Tbind of pos
@@ -83,6 +84,7 @@ module Token = struct
     | Tlc _ -> "{"
     | Trc _ -> "}"
     | Tcomma _ -> ","
+    | Teq _ -> "="
     (* | Tquest _ -> ";" *)
     (* | Tsemi _ -> ";" *)
     | Tbind _ -> ":="
@@ -106,6 +108,7 @@ module Token = struct
     | Trc p
     (* | Tquest p *)
     (* | Tsemi p *)
+    | Teq p
     | Tcomma p -> p, { p with pos_cnum = p.pos_cnum + 1 }
     | Tbind p | Tto p | Tin p ->
       p, { p with pos_cnum = p.pos_cnum + 2 }

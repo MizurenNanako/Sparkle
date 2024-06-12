@@ -26,7 +26,9 @@ module AST = struct
     | StrAtom of str
     | IdAtom of id
     | DeclExpr of decl_expr_desc
+    | ExtDeclExpr of ext_decl_expr_desc
     | LocalDeclExpr of local_decl_expr_desc
+    | ExportExpr of export_expr_desc
 
   and call_expr_desc =
     { call_expr_callee : expr
@@ -78,10 +80,21 @@ module AST = struct
     ; decl_type : type_expr
     }
 
+  and ext_decl_expr_desc =
+    { ext_decl_name : id
+    ; ext_decl_type : type_expr
+    ; ext_decl_symbol : id
+    }
+
   and local_decl_expr_desc =
     { local_decl_name : id
     ; local_decl_type : type_expr
     ; local_decl_ctx : expr
+    }
+
+  and export_expr_desc =
+    { export_sym : id
+    ; export_name : id
     }
 end
 
@@ -109,7 +122,9 @@ module Format = struct
     | (I64Atom _ as e)
     | (StrAtom _ as e) -> fmt_atom out e
     | DeclExpr e -> fmt_decl out e
+    | ExtDeclExpr e -> fmt_ext_decl out e
     | LocalDeclExpr e -> fmt_local_decl level out e
+    | ExportExpr e -> fmt_export out e
 
   and fmt_atom out a =
     let open Printf in
@@ -229,7 +244,7 @@ module Format = struct
     | TLambda (param, ret) ->
       Printf.fprintf
         out
-        "(%a) -> %a"
+        "[%a] -> %a"
         fmt_type_list
         param
         fmt_type_expr
@@ -247,6 +262,16 @@ module Format = struct
     let { decl_name; decl_type } = e in
     Printf.fprintf out "%s: %a\n" decl_name fmt_type_expr decl_type
 
+  and fmt_ext_decl out e =
+    let { ext_decl_name; ext_decl_type; ext_decl_symbol } = e in
+    Printf.fprintf
+      out
+      "%s: \"%s\" %a\n"
+      ext_decl_name
+      ext_decl_symbol
+      fmt_type_expr
+      ext_decl_type
+
   and fmt_local_decl level out e =
     let { local_decl_name; local_decl_type; local_decl_ctx } = e in
     Printf.fprintf
@@ -257,6 +282,9 @@ module Format = struct
       local_decl_type
       (fmt_expr level)
       local_decl_ctx
+
+  and fmt_export out e =
+    Printf.fprintf out "\"%s\": %s" e.export_sym e.export_name
   ;;
 
   let rec fmt out (a : expr list) =

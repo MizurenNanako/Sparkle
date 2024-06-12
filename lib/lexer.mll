@@ -7,7 +7,7 @@
 
 let reserved      = ['|' ':' '[' ']' '(' ')' '{' '}' ' ' '\t' '\n' ',' '?']
 let num       = ['0'-'9']
-let identifier    = (_ # reserved # num) (_ # reserved)*
+let identifier    = (_ # reserved # num # ['\"']) (_ # reserved)*
 let oct_char      = ['0'-'7']
 let hex_char      = ['0'-'9' 'A'-'F' 'a'-'f']
 (* let numbody       = ['0'-'9'] *)
@@ -47,6 +47,7 @@ rule get_token = parse
 | "}" { Trc lexbuf.lex_start_p }
 (* | "?" { Tquest lexbuf.lex_start_p } *)
 | "," { Tcomma lexbuf.lex_start_p }
+| "=" { Teq lexbuf.lex_start_p }
 | ":=" { Tbind lexbuf.lex_start_p }
 | "->" { Tto lexbuf.lex_start_p }
 | "=>" { Tin lexbuf.lex_start_p }

@@ -12,6 +12,7 @@
 %token <Range.pos> Tlc "{"
 %token <Range.pos> Trc "}"
 %token <Range.pos> Tcomma ","
+%token <Range.pos> Teq "="
 // %token <Range.pos> Tquest "?"
 // %token <Range.pos> Tsemi ","
 
@@ -37,11 +38,24 @@ top_expr:
 | a = expr; { a }
 | b = decl_expr; { b }
 | c = top_bind_expr; { c }
+| d = export_expr; { d }
 
 expr:
 // | a = bind_expr; { a }
 | b = lambda_expr; { b }
 | c = local_decl_expr; { c }
+
+export_expr:
+| sym = str; ":="; name = id;
+{
+    {
+        expr_desc = ExportExpr {
+            export_sym = fst sym;
+            export_name = fst name;
+        };
+        expr_rng = Range.join (snd sym) (snd name);
+    }
+}
 
 top_bind_expr:
 | a = id; ":="; e = expr;
@@ -66,10 +80,40 @@ decl_expr:
         expr_rng = Range.join (snd a) te.type_expr_rng;
     }
 }
+| a = id; ":"; extid = str; te = type_expr;
+{
+    {
+        expr_desc = ExtDeclExpr {
+            ext_decl_name = fst a;
+            ext_decl_type = te;
+            ext_decl_symbol = fst extid;
+        };
+        expr_rng = Range.join (snd a) te.type_expr_rng;
+    }
+}
 
 local_decl_expr:
 | a = id; ":"; te = type_expr; "=>"; e = local_decl_expr;
 {
+    {
+        expr_desc = LocalDeclExpr {
+            local_decl_name = fst a;
+            local_decl_type = te;
+            local_decl_ctx = e;
+        };
+        expr_rng = Range.join (snd a) e.expr_rng
+    }
+}
+| a = id; ":"; te = type_expr; "="; e1 = expr; "=>"; e2 = expr;
+{
+    let e = {
+        expr_desc = BindExpr {
+            bind_name = fst a;
+            bind_value = e1;
+            bind_ctx = e2;
+        };
+        expr_rng = Range.join (snd a) e2.expr_rng;
+    } in
     {
         expr_desc = LocalDeclExpr {
             local_decl_name = fst a;
@@ -214,13 +258,23 @@ type_expr:
         type_expr_rng = snd a;
     }
 }
-| posL = "("; pa = separated_list(",", type_expr); ")"; "->"; ret = type_expr;
+| posL = "["; pa = separated_list(",", type_expr); "]"; "->"; ret = type_expr;
 {
     {
         type_expr_desc = TLambda (pa, ret);
         type_expr_rng = posL, snd ret.type_expr_rng;
     }
 }
+| posL = "("; te = type_expr; posR = ")";
+{
+    {
+        te with 
+        type_expr_rng = posL, posR;
+    }
+} 
 
 id:
 | a = Tid; { a }
+
+str:
+| a = Tstr; { a }

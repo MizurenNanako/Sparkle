@@ -8,7 +8,7 @@ module MType = struct
     | Mf64
     | Mstr
     | Mbytes of int
-    | Msig of t
+    | Msig of t * bool ref
     | Mlambda of t list * t
     | Mpair of t * t
   [@@deriving sexp_of]
@@ -30,11 +30,34 @@ module MType = struct
        | false -> Merr)
   ;;
 
-  let eq (t1 : t) (t2 : t) = Stdlib.compare t1 t2 = 0
+  let rec repr (t : t) =
+    match t with
+    | Munit -> "unit"
+    | Merr -> "err"
+    | Mi64 -> "i64"
+    | Mf64 -> "f64"
+    | Mstr -> "str"
+    | Mbytes n -> Printf.sprintf "b%i" n
+    | Msig (a, b) ->
+      (match !b with
+       | false -> Printf.sprintf "?<%s>" (repr a)
+       | true -> Printf.sprintf "<%s>" (repr a))
+    | Mlambda (p, r) ->
+      let params = p |> List.map repr |> String.concat ", " in
+      Printf.sprintf "[%s] -> %s" params (repr r)
+    | Mpair (a, b) -> Printf.sprintf "(%s, %s)" (repr a) (repr b)
+  ;;
+
+  let eq (t1 : t) (t2 : t) =
+    match t1, t2 with
+    | t1, Msig (t2, _) -> Stdlib.compare t1 t2 = 0
+    | Msig (t1, _), t2 -> Stdlib.compare t1 t2 = 0
+    | _, _ -> Stdlib.compare t1 t2 = 0
+  ;;
 
   let call_on (callee : t) (args : t list) =
     match callee with
-    | Mlambda (param, ret) | Msig (Mlambda (param, ret)) ->
+    | Mlambda (param, ret) | Msig (Mlambda (param, ret), _) ->
       if param = args then Some ret else None
     | _ -> None
   ;;

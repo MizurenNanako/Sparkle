@@ -20,9 +20,8 @@ let () =
   try
     astl
     |> Semantics.Checking.check_module
-    |> Semantics.Checking.sexp_of_env
-    |> Sexplib.Sexp.output_hum stdout
-    |> print_newline
+    |> List.iter (fun (n, ty) ->
+      Printf.printf "%s: %s\n" n (Typing.MType.repr ty))
   with
   | Semantics.Checking.TypeError (msg, rng) ->
     Printf.eprintf
