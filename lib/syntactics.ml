@@ -251,12 +251,7 @@ module Format = struct
         ret
 
   and fmt_type_list out tyl =
-    match tyl with
-    | [] -> ()
-    | [ a ] -> Printf.fprintf out "%a" fmt_type_expr a
-    | a :: tl ->
-      Printf.fprintf out "%a, " fmt_type_expr a;
-      fmt_type_list out tl
+    Common.print_list fmt_type_expr ", " out tyl
 
   and fmt_decl out e =
     let { decl_name; decl_type } = e in
