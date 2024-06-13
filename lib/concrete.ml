@@ -1,4 +1,5 @@
-(** Concrete AST, all lexical ranges stripped. *)
+(** Concrete AST, all lexical ranges stripped.
+    used for node evaluation or high level ir *)
 module CAST = struct
   open Sexplib0.Sexp_conv
   open Typing
@@ -8,42 +9,86 @@ module CAST = struct
   type f64 = float [@@deriving sexp]
   type str = string [@@deriving sexp]
 
-  type expr =
-    { expr_desc : expr_desc
-    ; expr_ty : MType.t
+  type cc_expr =
+    { cc_expr_desc : cc_expr_desc
+    ; cc_expr_ty : MType.t
     }
   [@@deriving sexp_of]
 
-  and expr_desc =
+  and cc_expr_desc =
+    | CNop (* for decl won't do anything *)
     | CScope of
-        { scope_bind : bound_desc list
-        ; scope_ctx : expr
+        { cc_scope_bind : cc_bound_desc list
+        ; cc_scope_ctx : cc_expr
         }
-    | CFunc of func_expr_desc
-    | CCond of cond_expr_desc
+    (* special global var binding *)
+    | CTopBind of { cc_top_bind : cc_bound_desc }
+    | CFunc of
+        { cc_func_param : (id * MType.t) list
+        ; cc_func_body : cc_expr
+        }
+    | CCond of cc_branch list
     | CCall of
-        { call_expr_callee : expr
-        ; call_expr_param : expr list
+        { cc_call_callee : cc_expr
+        ; cc_call_param : cc_expr list
         }
     | CAI64 of i64
     | CAF64 of f64
     | CAStr of str
     | CAId of id
 
-  and bound_desc =
-    { bound_name : id
-    ; bound_value : expr
+  and cc_bound_desc =
+    { cc_bound_name : id
+    ; cc_bound_value : cc_expr
     }
 
-  and func_expr_desc =
-    { func_param : (id * MType.t) list
-    ; func_body : expr
+  and cc_branch =
+    { cc_branch_pred : cc_expr
+    ; cc_branch_expr : cc_expr
     }
 
-  and cond_expr_desc = { cond_branch : branch list }
-
-  and branch =
-    { branch_pred : expr
-    ; branch_expr : expr
+  type cc_module =
+    { cc_module_export : (id * MType.t) list
+    ; cc_module_import : (id * MType.t) list
+    ; cc_module_expr : cc_expr list
     }
+
+  let cc_i64 i = { cc_expr_desc = CAI64 i; cc_expr_ty = Mi64 }
+  let cc_f64 f = { cc_expr_desc = CAF64 f; cc_expr_ty = Mf64 }
+  let cc_str s = { cc_expr_desc = CAStr s; cc_expr_ty = Mstr }
+  let cc_id s ty = { cc_expr_desc = CAId s; cc_expr_ty = ty }
+  let cc_bound id expr = { cc_bound_name = id; cc_bound_value = expr }
+
+  let cc_scope boundlist ctx =
+    { cc_expr_desc =
+        CScope { cc_scope_bind = boundlist; cc_scope_ctx = ctx }
+    ; cc_expr_ty = ctx.cc_expr_ty
+    }
+  ;;
+
+  let cc_topbind bound =
+    { cc_expr_desc = CTopBind { cc_top_bind = bound }
+    ; cc_expr_ty = Munit
+    }
+  ;;
+
+  let cc_nop = { cc_expr_desc = CNop; cc_expr_ty = Munit }
+
+  let cc_func paramlist body func_ty =
+    { cc_expr_desc =
+        CFunc { cc_func_param = paramlist; cc_func_body = body }
+    ; cc_expr_ty = func_ty
+    }
+  ;;
+
+  let cc_call callee args ret_ty =
+    { cc_expr_desc =
+        CCall { cc_call_callee = callee; cc_call_param = args }
+    ; cc_expr_ty = ret_ty
+    }
+  ;;
+
+  let cc_cond brlst cond_ty =
+    { cc_expr_desc = CCond brlst; cc_expr_ty = cond_ty }
+  ;;
 end

@@ -8,7 +8,7 @@ module Checking = struct
 
   module A = Syntactics.AST
   module M = Typing.MType
-  module C = Concrete.CAST
+  open Concrete.CAST
 
   type id = A.id [@@deriving sexp_of]
   type env = (id * M.t) list [@@deriving sexp_of]
@@ -29,14 +29,14 @@ module Checking = struct
       M.Mlambda (param_ty, ret_ty)
   ;;
 
-  let rec _expr (env : env) (a : A.expr) : M.t * env =
+  let rec _expr (env : env) (a : A.expr) : M.t * env * cc_expr =
     match a.expr_desc with
-    | F64Atom _ -> M.Mf64, env
-    | I64Atom _ -> M.Mi64, env
-    | StrAtom _ -> M.Mstr, env
+    | F64Atom x -> M.Mf64, env, cc_f64 x
+    | I64Atom x -> M.Mi64, env, cc_i64 x
+    | StrAtom x -> M.Mstr, env, cc_str x
     | IdAtom id ->
       (match List.assoc_opt id env with
-       | Some ty -> ty, env
+       | Some ty -> ty, env, cc_id id ty
        | None ->
          raise
          @@ TypeError
@@ -51,7 +51,9 @@ module Checking = struct
     | CondExpr c -> _branch a.expr_rng env c.cond_branch
     | ExportExpr e -> _export a.expr_rng env e
 
-  and _expr' env a = _expr env a |> fst
+  and _expr' env a =
+    let a, _, b = _expr env a in
+    a, b
 
   and _lambda rng env lam =
     ignore rng;
@@ -63,20 +65,24 @@ module Checking = struct
       lam.lambda_param
       |> List.map (fun entry -> entry.A.param_item_id)
     in
-    let env = List.append (List.combine param_id param_ty) env in
-    let ret_ty = _expr' env lam.lambda_expr in
-    M.Mlambda (param_ty, ret_ty), env
+    let param_ty_list = List.combine param_id param_ty in
+    let env = List.append param_ty_list env in
+    let ret_ty, cexpr_body = _expr' env lam.lambda_expr in
+    let func_ty = M.Mlambda (param_ty, ret_ty) in
+    func_ty, env, cc_func param_ty_list cexpr_body func_ty
 
   and _bind rng env bnd =
     ignore rng;
     match bnd.bind_name = "_" with
     | false ->
-      let ty = _expr' env bnd.bind_value in
+      let ty, cexpr_v = _expr' env bnd.bind_value in
       let bond =
+        (* check if declared *)
         match List.assoc_opt bnd.bind_name env with
         | Some (M.Msig (a, b)) ->
           if M.eq a ty
           then (
+            (*  mark it implanted *)
             b := true;
             bnd.bind_name, ty)
           else
@@ -88,19 +94,35 @@ module Checking = struct
                      (M.repr a)
                      (M.repr ty)
                  , rng )
-        (* , bnd.bind_value.expr_rng ) *)
         | _ -> bnd.bind_name, ty
       in
       let env' = bond :: env in
-      let rety = _expr' env' bnd.bind_ctx in
-      rety, env
-    | true -> M.Munit, env
+      let rety, cexpr_ctx = _expr' env' bnd.bind_ctx in
+      rety, env, cc_scope [ cc_bound bnd.bind_name cexpr_v ] cexpr_ctx
+    | true ->
+      (* This means bind something to unit
+         type inferences should check this. *)
+      let ty, cexpr_v = _expr' env bnd.bind_value in
+      let rety, cexpr_ctx = _expr' env bnd.bind_ctx in
+      let cexpr =
+        match M.eq ty M.Munit with
+        | true ->
+          cc_scope [ cc_bound bnd.bind_name cexpr_v ] cexpr_ctx
+        | false ->
+          raise
+          @@ TypeError
+               ( Printf.sprintf
+                   "Binding non-unit type \"%s\" to unit"
+                   (M.repr rety)
+               , rng )
+      in
+      M.Munit, env, cexpr
 
   and _top_bind rng env bnd =
     ignore rng;
     match bnd.top_bind_name = "_" with
     | false ->
-      let ty = _expr' env bnd.top_bind_value in
+      let ty, cexpr_v = _expr' env bnd.top_bind_value in
       let bond =
         match List.assoc_opt bnd.top_bind_name env with
         | Some (M.Msig (a, b)) ->
@@ -120,18 +142,37 @@ module Checking = struct
         | _ -> bnd.top_bind_name, ty
       in
       let env' = bond :: env in
-      M.Munit, env'
-    | true -> M.Munit, env
+      M.Munit, env', cc_topbind (cc_bound bnd.top_bind_name cexpr_v)
+    | true ->
+      (* this is a side effect evaluation *)
+      let ty, cexpr_v = _expr' env bnd.top_bind_value in
+      let cexpr =
+        match M.eq ty M.Munit with
+        | true -> cc_topbind (cc_bound bnd.top_bind_name cexpr_v)
+        | false ->
+          raise
+          @@ TypeError
+               ( Printf.sprintf
+                   "Binding non-unit type \"%s\" to unit"
+                   (M.repr ty)
+               , rng )
+      in
+      M.Munit, env, cexpr
 
   and _branch rng env brl =
     ignore rng;
-    let rec loop acc l =
+    let rec loop (acc : M.t option * cc_branch list) l =
       match l with
       | [] -> assert false
       | [ a ] ->
-        let brty =
+        let brty, branch =
           match a.A.branch_pred.expr_desc with
-          | IdAtom "_" -> _expr' env a.A.branch_expr
+          | IdAtom "_" ->
+            let act_ty, cexpr_act = _expr' env a.A.branch_expr in
+            ( act_ty
+            , { cc_branch_pred = cc_i64 1L
+              ; cc_branch_expr = cexpr_act
+              } )
           | _ ->
             raise
             @@ StructureError
@@ -139,19 +180,27 @@ module Checking = struct
                  , a.A.branch_pred.expr_rng )
         in
         (match acc with
-         | None -> brty
-         | Some ty ->
+         | None, branches -> brty, branch :: branches
+         | Some ty, branches ->
            if M.eq ty brty
-           then ty
+           then ty, branch :: branches
            else
              raise
              @@ TypeError
-                  ( "branch return types unmatched"
+                  ( Printf.sprintf
+                      "branch return types unmatched: %s and %s"
+                      (Typing.MType.repr ty)
+                      (Typing.MType.repr brty)
                   , a.A.branch_expr.expr_rng ))
       | a :: tl ->
-        let brty =
+        let brty, branch =
           match _expr' env a.A.branch_pred with
-          | Mi64 -> _expr' env a.A.branch_expr
+          | Mi64, mexpr_pred ->
+            let act_ty, cexpr_act = _expr' env a.A.branch_expr in
+            ( act_ty
+            , { cc_branch_pred = mexpr_pred
+              ; cc_branch_expr = cexpr_act
+              } )
           | _ ->
             raise
             @@ TypeError
@@ -159,10 +208,10 @@ module Checking = struct
                  , a.A.branch_pred.expr_rng )
         in
         (match acc with
-         | None -> loop (Some brty) tl
-         | Some ty ->
+         | None, branches -> loop (Some brty, branch :: branches) tl
+         | Some ty, branches ->
            if M.eq ty brty
-           then loop (Some ty) tl
+           then loop (Some ty, branch :: branches) tl
            else
              raise
              @@ TypeError
@@ -172,13 +221,16 @@ module Checking = struct
                       (Typing.MType.repr brty)
                   , a.A.branch_expr.expr_rng ))
     in
-    loop None brl, env
+    let ty, brlst = loop (None, []) brl in
+    ty, env, cc_cond brlst ty
 
   and _call rng env c =
-    let callee_ty = _expr' env c.call_expr_callee in
-    let args_ty = List.map (_expr' env) c.call_expr_param in
+    let callee_ty, cexpr_callee = _expr' env c.call_expr_callee in
+    let args_and_ty = List.map (_expr' env) c.call_expr_param in
+    let args_only = List.map snd args_and_ty in
+    let args_ty = List.map fst args_and_ty in
     match M.call_on callee_ty args_ty with
-    | Some ty -> ty, env
+    | Some ty -> ty, env, cc_call cexpr_callee args_only ty
     | None ->
       raise
       @@ TypeError
@@ -215,17 +267,17 @@ module Checking = struct
           raise @@ TypeError ("type unit is unbindable", rng)
         | _ -> name, ty
       in
-      M.Munit, bond :: env
+      M.Munit, bond :: env, cc_nop
 
   and _ext_decl rng env d =
     let name = d.ext_decl_name in
-    let ty = M.Msig (_type d.ext_decl_type, ref true) in
+    let ty = M.Mimport (_type d.ext_decl_type) in
     match ty with
     | M.Merr ->
       raise
       @@ TypeError
            (Printf.sprintf "Invaild type: \"%s\"" d.ext_decl_name, rng)
-    | _ -> M.Munit, (name, ty) :: env
+    | _ -> M.Munit, (name, ty) :: env, cc_nop
 
   and _local_decl rng env d =
     let name = d.local_decl_name in
@@ -235,7 +287,7 @@ module Checking = struct
     | _ ->
       let env' = (name, ty) :: env in
       (* let ty', _ = _expr env' d.local_decl_ctx in *)
-      let ty', env' = _expr env' d.local_decl_ctx in
+      let ty', env', _ = _expr env' d.local_decl_ctx in
       (* before leave, check the local def is satisfied or not *)
       (match List.assoc_opt name env' with
        | None -> assert false
@@ -249,15 +301,13 @@ module Checking = struct
                       \"%s\""
                      name
                  , rng )
-          | true -> ty', env)
-       | Some _ -> ty', env)
+          | true -> ty', env, cc_nop)
+       | Some _ -> ty', env, cc_nop)
 
   and _export rng env e =
     match List.assoc_opt e.export_name env with
     | Some entry ->
-      (* todo: add to the export list with this entry *)
-      ignore entry;
-      M.Munit, env
+      M.Munit, (e.export_name, M.Mexport entry) :: env, cc_nop
     | None ->
       raise
       @@ TypeError
@@ -267,20 +317,38 @@ module Checking = struct
            , rng )
   ;;
 
-  let check_module (astl : A.expr list) : env =
-    let rec loop l env =
+  let check_module (astl : A.expr list) : cc_module =
+    let rec loop (acc : cc_expr list) env l =
       match l with
-      | [] -> env
+      | [] -> acc, env
       | a :: tl ->
-        let ty, env = _expr env a in
+        let ty, env, cc = _expr env a in
         (match ty with
-         | M.Munit -> loop tl env
+         | M.Munit -> loop (cc :: acc) env tl
          | _ ->
            raise
            @@ TypeError
                 ( "Type of toplevel expression must be unit"
                 , a.expr_rng ))
     in
-    loop astl [ "_", M.Munit ]
+    let expr_lst, env = loop [] [] astl in
+    let import_lst =
+      List.filter_map
+        (function
+          | name, M.Mimport s -> Some (name, s)
+          | _ -> None)
+        env
+    in
+    let export_lst =
+      List.filter_map
+        (function
+          | name, M.Mexport s -> Some (name, s)
+          | _ -> None)
+        env
+    in
+    { cc_module_import = import_lst
+    ; cc_module_export = export_lst
+    ; cc_module_expr = expr_lst
+    }
   ;;
 end

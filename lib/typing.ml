@@ -11,6 +11,9 @@ module MType = struct
     | Msig of t * bool ref
     | Mlambda of t list * t
     | Mpair of t * t
+    (* placeholder *)
+    | Mexport of t
+    | Mimport of t
   [@@deriving sexp]
 
   let of_tid (tid : string) =
@@ -46,13 +49,17 @@ module MType = struct
       let params = p |> List.map repr |> String.concat ", " in
       Printf.sprintf "[%s] -> %s" params (repr r)
     | Mpair (a, b) -> Printf.sprintf "(%s, %s)" (repr a) (repr b)
+    | Mimport a -> Printf.sprintf "import(\"%s\")" (repr a)
+    | Mexport a -> Printf.sprintf "export(\"%s\")" (repr a)
+  ;;
+
+  let unwrap t1 =
+    match t1 with
+    | Msig (a, _) | Mimport a | a -> a
   ;;
 
   let eq (t1 : t) (t2 : t) =
-    match t1, t2 with
-    | t1, Msig (t2, _) -> Stdlib.compare t1 t2 = 0
-    | Msig (t1, _), t2 -> Stdlib.compare t1 t2 = 0
-    | _, _ -> Stdlib.compare t1 t2 = 0
+    Stdlib.compare (unwrap t1) (unwrap t2) = 0
   ;;
 
   let call_on (callee : t) (args : t list) =
