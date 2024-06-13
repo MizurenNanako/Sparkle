@@ -98,7 +98,7 @@ module Checking = struct
       in
       let env' = bond :: env in
       let rety, cexpr_ctx = _expr' env' bnd.bind_ctx in
-      rety, env, cc_scope [ cc_bound bnd.bind_name cexpr_v ] cexpr_ctx
+      rety, env, cc_bind (cc_bound bnd.bind_name cexpr_v) cexpr_ctx
     | true ->
       (* This means bind something to unit
          type inferences should check this. *)
@@ -106,8 +106,7 @@ module Checking = struct
       let rety, cexpr_ctx = _expr' env bnd.bind_ctx in
       let cexpr =
         match M.eq ty M.Munit with
-        | true ->
-          cc_scope [ cc_bound bnd.bind_name cexpr_v ] cexpr_ctx
+        | true -> cc_bind (cc_bound bnd.bind_name cexpr_v) cexpr_ctx
         | false ->
           raise
           @@ TypeError
@@ -222,7 +221,7 @@ module Checking = struct
                   , a.A.branch_expr.expr_rng ))
     in
     let ty, brlst = loop (None, []) brl in
-    ty, env, cc_cond brlst ty
+    ty, env, cc_cond (List.rev brlst) ty
 
   and _call rng env c =
     let callee_ty, cexpr_callee = _expr' env c.call_expr_callee in
@@ -271,7 +270,7 @@ module Checking = struct
 
   and _ext_decl rng env d =
     let name = d.ext_decl_name in
-    let ty = M.Mimport (_type d.ext_decl_type) in
+    let ty = M.Mimport (d.ext_decl_symbol, _type d.ext_decl_type) in
     match ty with
     | M.Merr ->
       raise
@@ -307,7 +306,9 @@ module Checking = struct
   and _export rng env e =
     match List.assoc_opt e.export_name env with
     | Some entry ->
-      M.Munit, (e.export_name, M.Mexport entry) :: env, cc_nop
+      ( M.Munit
+      , (e.export_name, M.Mexport (e.export_sym, entry)) :: env
+      , cc_nop )
     | None ->
       raise
       @@ TypeError
@@ -336,14 +337,14 @@ module Checking = struct
     let import_lst =
       List.filter_map
         (function
-          | name, M.Mimport s -> Some (name, s)
+          | name, (M.Mimport _ as s) -> Some (name, s)
           | _ -> None)
         env
     in
     let export_lst =
       List.filter_map
         (function
-          | name, M.Mexport s -> Some (name, s)
+          | name, (M.Mexport _ as s) -> Some (name, s)
           | _ -> None)
         env
     in

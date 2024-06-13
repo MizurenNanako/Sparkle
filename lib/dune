@@ -67,3 +67,8 @@
  (name immediate)
  (modules immediate)
  (libraries common))
+
+(library
+ (name ir_lisp)
+ (modules ir_lisp)
+ (libraries concrete sexplib))

@@ -17,20 +17,20 @@ module CAST = struct
 
   and cc_expr_desc =
     | CNop (* for decl won't do anything *)
-    | CScope of
-        { cc_scope_bind : cc_bound_desc list
-        ; cc_scope_ctx : cc_expr
+    | CBind of
+        { cc_bind_bind : cc_bound_desc
+        ; cc_bind_ctx : cc_expr
         }
     (* special global var binding *)
     | CTopBind of { cc_top_bind : cc_bound_desc }
-    | CFunc of
+    | CLambda of
         { cc_func_param : (id * MType.t) list
         ; cc_func_body : cc_expr
         }
     | CCond of cc_branch list
     | CCall of
         { cc_call_callee : cc_expr
-        ; cc_call_param : cc_expr list
+        ; cc_call_args : cc_expr list
         }
     | CAI64 of i64
     | CAF64 of f64
@@ -60,9 +60,9 @@ module CAST = struct
   let cc_id s ty = { cc_expr_desc = CAId s; cc_expr_ty = ty }
   let cc_bound id expr = { cc_bound_name = id; cc_bound_value = expr }
 
-  let cc_scope boundlist ctx =
+  let cc_bind binding ctx =
     { cc_expr_desc =
-        CScope { cc_scope_bind = boundlist; cc_scope_ctx = ctx }
+        CBind { cc_bind_bind = binding; cc_bind_ctx = ctx }
     ; cc_expr_ty = ctx.cc_expr_ty
     }
   ;;
@@ -77,14 +77,14 @@ module CAST = struct
 
   let cc_func paramlist body func_ty =
     { cc_expr_desc =
-        CFunc { cc_func_param = paramlist; cc_func_body = body }
+        CLambda { cc_func_param = paramlist; cc_func_body = body }
     ; cc_expr_ty = func_ty
     }
   ;;
 
   let cc_call callee args ret_ty =
     { cc_expr_desc =
-        CCall { cc_call_callee = callee; cc_call_param = args }
+        CCall { cc_call_callee = callee; cc_call_args = args }
     ; cc_expr_ty = ret_ty
     }
   ;;

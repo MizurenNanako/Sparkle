@@ -9,8 +9,8 @@ let () =
   try
     astl
     |> Semantics.Checking.check_module
-    |> Concrete.CAST.sexp_of_cc_module
-    |> Sexplib.Sexp.output_hum stdout
+    |> Ir_lisp.CC2CL.cl_of_module
+    |> List.iter (Printf.printf "%a\n" Sexplib.Sexp.output_hum)
     |> print_newline
     (* |> List.iter (fun (n, ty) ->
        Printf.printf "%s: %s\n" n (Typing.MType.repr ty)) *)
