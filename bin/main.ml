@@ -7,7 +7,11 @@ let () =
      |> List.iter (Sexplib.Sexp.output_hum stdout)
      |> print_newline *)
   try
-    astl |> Semantics.Checking.check_module |> ignore
+    astl
+    |> Semantics.Checking.check_module
+    |> Concrete.CAST.sexp_of_cc_module
+    |> Sexplib.Sexp.output_hum stdout
+    |> print_newline
     (* |> List.iter (fun (n, ty) ->
        Printf.printf "%s: %s\n" n (Typing.MType.repr ty)) *)
   with

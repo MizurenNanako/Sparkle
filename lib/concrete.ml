@@ -13,7 +13,7 @@ module CAST = struct
     { cc_expr_desc : cc_expr_desc
     ; cc_expr_ty : MType.t
     }
-  [@@deriving sexp_of]
+  [@@deriving sexp]
 
   and cc_expr_desc =
     | CNop (* for decl won't do anything *)
@@ -52,6 +52,7 @@ module CAST = struct
     ; cc_module_import : (id * MType.t) list
     ; cc_module_expr : cc_expr list
     }
+  [@@deriving sexp]
 
   let cc_i64 i = { cc_expr_desc = CAI64 i; cc_expr_ty = Mi64 }
   let cc_f64 f = { cc_expr_desc = CAF64 f; cc_expr_ty = Mf64 }

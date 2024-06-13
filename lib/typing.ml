@@ -63,9 +63,8 @@ module MType = struct
   ;;
 
   let call_on (callee : t) (args : t list) =
-    match callee with
-    | Mlambda (param, ret) | Msig (Mlambda (param, ret), _) ->
-      if param = args then Some ret else None
+    match unwrap callee with
+    | Mlambda (param, ret) -> if param = args then Some ret else None
     | _ -> None
   ;;
 

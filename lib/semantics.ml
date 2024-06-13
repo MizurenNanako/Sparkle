@@ -287,7 +287,7 @@ module Checking = struct
     | _ ->
       let env' = (name, ty) :: env in
       (* let ty', _ = _expr env' d.local_decl_ctx in *)
-      let ty', env', _ = _expr env' d.local_decl_ctx in
+      let ty', env', cexpr_ctx = _expr env' d.local_decl_ctx in
       (* before leave, check the local def is satisfied or not *)
       (match List.assoc_opt name env' with
        | None -> assert false
@@ -301,8 +301,8 @@ module Checking = struct
                       \"%s\""
                      name
                  , rng )
-          | true -> ty', env, cc_nop)
-       | Some _ -> ty', env, cc_nop)
+          | true -> ty', env, cexpr_ctx)
+       | Some _ -> ty', env, cexpr_ctx)
 
   and _export rng env e =
     match List.assoc_opt e.export_name env with
@@ -324,7 +324,8 @@ module Checking = struct
       | a :: tl ->
         let ty, env, cc = _expr env a in
         (match ty with
-         | M.Munit -> loop (cc :: acc) env tl
+         | M.Munit ->
+           loop (if cc <> cc_nop then cc :: acc else acc) env tl
          | _ ->
            raise
            @@ TypeError
@@ -348,7 +349,7 @@ module Checking = struct
     in
     { cc_module_import = import_lst
     ; cc_module_export = export_lst
-    ; cc_module_expr = expr_lst
+    ; cc_module_expr = List.rev expr_lst
     }
   ;;
 end
