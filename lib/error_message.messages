@@ -1,0 +1,621 @@
+start: Tto
+##
+## Ends in an error in state: 0.
+##
+## start' -> . start [ # ]
+##
+## The known suffix of the stack is as follows:
+##
+##
+
+Ill-formed expression.
+
+start: Tstr Trp
+##
+## Ends in an error in state: 1.
+##
+## primary_expr -> Tstr . [ Tto Tstr Tlp Tlb Tid Ti64 Tf64 Teof ]
+## str -> Tstr . [ Tbind ]
+##
+## The known suffix of the stack is as follows:
+## Tstr
+##
+
+Ill-formed expression.
+Note: Use "<symbol-name>" := <defined-symbol> to export a symbol.
+
+start: Tlp Tto
+##
+## Ends in an error in state: 2.
+##
+## lambda_expr -> Tlp . loption(separated_nonempty_list(Tcomma,param_)) Trp Tto expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+## primary_expr -> Tlp . expr Trp [ Tto Tstr Trp Tlp Tlb Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## Tlp
+##
+
+Ill-formed expression.
+Note: Use (<param1: type1, param2: type2, ...>) -> <expr> to introduce a lambda.
+
+start: Tid Trc
+##
+## Ends in an error in state: 4.
+##
+## id -> Tid . [ Tcolon Tbind ]
+## primary_expr -> Tid . [ Tto Tstr Trp Tlp Tlb Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## Tid
+##
+
+Ill-formed expression.
+
+start: Tlp Tid Tcolon Tid Tcomma Tid Tcolon Tid Tto
+##
+## Ends in an error in state: 9.
+##
+## separated_nonempty_list(Tcomma,param_) -> param_ . [ Trp ]
+## separated_nonempty_list(Tcomma,param_) -> param_ . Tcomma separated_nonempty_list(Tcomma,param_) [ Trp ]
+##
+## The known suffix of the stack is as follows:
+## param_
+##
+
+Ill-formed expression.
+
+start: Tlp Tid Tcolon Tid Tcomma Tto
+##
+## Ends in an error in state: 10.
+##
+## separated_nonempty_list(Tcomma,param_) -> param_ Tcomma . separated_nonempty_list(Tcomma,param_) [ Trp ]
+##
+## The known suffix of the stack is as follows:
+## param_ Tcomma
+##
+
+Ill-formed expression.
+
+start: Tlp Tid Tcolon Tid Tcomma Tid Tto
+##
+## Ends in an error in state: 13.
+##
+## param_ -> id . Tcolon type_expr [ Trp Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## id
+##
+
+Ill-formed expression.
+
+start: Tlp Tid Tcolon Tid Tcomma Tid Tcolon Tto
+##
+## Ends in an error in state: 14.
+##
+## param_ -> id Tcolon . type_expr [ Trp Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlp Tto
+##
+## Ends in an error in state: 15.
+##
+## type_expr -> Tlp . type_expr Trp [ Tstr Trp Trb Tlp Tin Tid Ti64 Tf64 Teq Teof Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## Tlp
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlb Tto
+##
+## Ends in an error in state: 16.
+##
+## type_expr -> Tlb . loption(separated_nonempty_list(Tcomma,type_expr)) Trb Tto type_expr [ Tstr Trp Trb Tlp Tin Tid Ti64 Tf64 Teq Teof Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## Tlb
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlb Tid Tto
+##
+## Ends in an error in state: 17.
+##
+## separated_nonempty_list(Tcomma,type_expr) -> type_expr . [ Trb ]
+## separated_nonempty_list(Tcomma,type_expr) -> type_expr . Tcomma separated_nonempty_list(Tcomma,type_expr) [ Trb ]
+##
+## The known suffix of the stack is as follows:
+## type_expr
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlb Tid Tcomma Tto
+##
+## Ends in an error in state: 18.
+##
+## separated_nonempty_list(Tcomma,type_expr) -> type_expr Tcomma . separated_nonempty_list(Tcomma,type_expr) [ Trb ]
+##
+## The known suffix of the stack is as follows:
+## type_expr Tcomma
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlb Trb Tstr
+##
+## Ends in an error in state: 23.
+##
+## type_expr -> Tlb loption(separated_nonempty_list(Tcomma,type_expr)) Trb . Tto type_expr [ Tstr Trp Trb Tlp Tin Tid Ti64 Tf64 Teq Teof Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## Tlb loption(separated_nonempty_list(Tcomma,type_expr)) Trb
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlb Trb Tto Tto
+##
+## Ends in an error in state: 24.
+##
+## type_expr -> Tlb loption(separated_nonempty_list(Tcomma,type_expr)) Trb Tto . type_expr [ Tstr Trp Trb Tlp Tin Tid Ti64 Tf64 Teq Teof Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## Tlb loption(separated_nonempty_list(Tcomma,type_expr)) Trb Tto
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tlp Tid Tto
+##
+## Ends in an error in state: 26.
+##
+## type_expr -> Tlp type_expr . Trp [ Tstr Trp Trb Tlp Tin Tid Ti64 Tf64 Teq Teof Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## Tlp type_expr
+##
+
+Ill-formed expression.
+
+start: Tlp Trp Tstr
+##
+## Ends in an error in state: 30.
+##
+## lambda_expr -> Tlp loption(separated_nonempty_list(Tcomma,param_)) Trp . Tto expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## Tlp loption(separated_nonempty_list(Tcomma,param_)) Trp
+##
+
+Ill-formed expression.
+
+start: Tlp Trp Tto Tto
+##
+## Ends in an error in state: 31.
+##
+## lambda_expr -> Tlp loption(separated_nonempty_list(Tcomma,param_)) Trp Tto . expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## Tlp loption(separated_nonempty_list(Tcomma,param_)) Trp Tto
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tid Tin Tid Tto
+##
+## Ends in an error in state: 34.
+##
+## bind_expr -> id . Tbind expr Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id . Tcolon type_expr Tin local_decl_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id . Tcolon type_expr Teq expr Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id
+##
+
+Ill-formed expression.
+
+start: Tid Tbind Tid Tcolon Tto
+##
+## Ends in an error in state: 35.
+##
+## local_decl_expr -> id Tcolon . type_expr Tin local_decl_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id Tcolon . type_expr Teq expr Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon
+##
+
+Ill-formed expression.
+
+start: Tid Tbind Tid Tcolon Tid Tto
+##
+## Ends in an error in state: 36.
+##
+## local_decl_expr -> id Tcolon type_expr . Tin local_decl_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id Tcolon type_expr . Teq expr Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tid Tin Tto
+##
+## Ends in an error in state: 37.
+##
+## local_decl_expr -> id Tcolon type_expr Tin . local_decl_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr Tin
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tid Teq Tto
+##
+## Ends in an error in state: 40.
+##
+## local_decl_expr -> id Tcolon type_expr Teq . expr Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr Teq
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tid Teq Tf64 Tstr
+##
+## Ends in an error in state: 41.
+##
+## local_decl_expr -> id Tcolon type_expr Teq expr . Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr Teq expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 52, spurious reduction of production cond_expr -> call_expr
+## In state 49, spurious reduction of production lambda_expr -> cond_expr
+## In state 33, spurious reduction of production expr -> lambda_expr
+##
+
+Ill-formed expression.
+
+start: Tid Tcolon Tid Teq Tf64 Tin Tto
+##
+## Ends in an error in state: 42.
+##
+## local_decl_expr -> id Tcolon type_expr Teq expr Tin . expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr Teq expr Tin
+##
+
+Ill-formed expression.
+
+start: Tf64 Tto Tid Tbar Tto
+##
+## Ends in an error in state: 45.
+##
+## cond_rev -> cond_rev Tbar . cond_ [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof Tbar ]
+##
+## The known suffix of the stack is as follows:
+## cond_rev Tbar
+##
+
+Ill-formed expression.
+
+start: Tf64 Tlb Tlp Tto
+##
+## Ends in an error in state: 46.
+##
+## primary_expr -> Tlp . expr Trp [ Tto Tstr Trp Trb Tlp Tlb Tin Tid Ti64 Tf64 Teof Tcomma Tbar ]
+##
+## The known suffix of the stack is as follows:
+## Tlp
+##
+
+Ill-formed expression.
+
+start: Tlp Tf64 Tstr
+##
+## Ends in an error in state: 47.
+##
+## primary_expr -> Tlp expr . Trp [ Tto Tstr Trp Trb Tlp Tlb Tin Tid Ti64 Tf64 Teof Tcomma Tbar ]
+##
+## The known suffix of the stack is as follows:
+## Tlp expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 52, spurious reduction of production cond_expr -> call_expr
+## In state 49, spurious reduction of production lambda_expr -> cond_expr
+## In state 33, spurious reduction of production expr -> lambda_expr
+##
+
+Ill-formed expression.
+
+start: Tf64 Trc
+##
+## Ends in an error in state: 52.
+##
+## call_expr -> call_expr . Tlb loption(separated_nonempty_list(Tcomma,call_expr)) Trb [ Tto Tstr Trp Tlp Tlb Tin Tid Ti64 Tf64 Teof ]
+## cond_ -> call_expr . Tto call_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof Tbar ]
+## cond_expr -> call_expr . [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## call_expr
+##
+
+Ill-formed expression.
+
+start: Tf64 Tto Tto
+##
+## Ends in an error in state: 53.
+##
+## cond_ -> call_expr Tto . call_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof Tbar ]
+##
+## The known suffix of the stack is as follows:
+## call_expr Tto
+##
+
+Ill-formed expression.
+
+start: Tf64 Tto Tid Trc
+##
+## Ends in an error in state: 55.
+##
+## call_expr -> call_expr . Tlb loption(separated_nonempty_list(Tcomma,call_expr)) Trb [ Tstr Trp Tlp Tlb Tin Tid Ti64 Tf64 Teof Tbar ]
+## cond_ -> call_expr Tto call_expr . [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof Tbar ]
+##
+## The known suffix of the stack is as follows:
+## call_expr Tto call_expr
+##
+
+Ill-formed expression.
+
+start: Tf64 Tlb Tto
+##
+## Ends in an error in state: 56.
+##
+## call_expr -> call_expr Tlb . loption(separated_nonempty_list(Tcomma,call_expr)) Trb [ Tto Tstr Trp Trb Tlp Tlb Tin Tid Ti64 Tf64 Teof Tcomma Tbar ]
+##
+## The known suffix of the stack is as follows:
+## call_expr Tlb
+##
+
+Ill-formed expression.
+
+start: Tf64 Tlb Tid Trc
+##
+## Ends in an error in state: 60.
+##
+## call_expr -> call_expr . Tlb loption(separated_nonempty_list(Tcomma,call_expr)) Trb [ Trb Tlb Tcomma ]
+## separated_nonempty_list(Tcomma,call_expr) -> call_expr . [ Trb ]
+## separated_nonempty_list(Tcomma,call_expr) -> call_expr . Tcomma separated_nonempty_list(Tcomma,call_expr) [ Trb ]
+##
+## The known suffix of the stack is as follows:
+## call_expr
+##
+
+Ill-formed expression.
+
+start: Tf64 Tlb Tid Tcomma Tto
+##
+## Ends in an error in state: 61.
+##
+## separated_nonempty_list(Tcomma,call_expr) -> call_expr Tcomma . separated_nonempty_list(Tcomma,call_expr) [ Trb ]
+##
+## The known suffix of the stack is as follows:
+## call_expr Tcomma
+##
+
+Ill-formed expression.
+
+start: Tf64 Tto Tid Tbar Tid Trc
+##
+## Ends in an error in state: 64.
+##
+## call_expr -> call_expr . Tlb loption(separated_nonempty_list(Tcomma,call_expr)) Trb [ Tto Tlb ]
+## cond_ -> call_expr . Tto call_expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof Tbar ]
+##
+## The known suffix of the stack is as follows:
+## call_expr
+##
+
+Ill-formed expression in branch.
+
+start: Tlp Tid Tbind Tto
+##
+## Ends in an error in state: 65.
+##
+## bind_expr -> id Tbind . expr Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tbind
+##
+
+Ill-formed expression in binding.
+
+start: Tlp Tid Tbind Tf64 Tstr
+##
+## Ends in an error in state: 66.
+##
+## bind_expr -> id Tbind expr . Tin expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tbind expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 52, spurious reduction of production cond_expr -> call_expr
+## In state 49, spurious reduction of production lambda_expr -> cond_expr
+## In state 33, spurious reduction of production expr -> lambda_expr
+##
+
+Ill-formed expression in binding.
+
+start: Tid Tbind Tf64 Tin Tto
+##
+## Ends in an error in state: 67.
+##
+## bind_expr -> id Tbind expr Tin . expr [ Tstr Trp Tlp Tin Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tbind expr Tin
+##
+
+Ill-formed expression in binding context.
+
+start: Tlp Tid Tcolon Tto
+##
+## Ends in an error in state: 71.
+##
+## local_decl_expr -> id Tcolon . type_expr Tin local_decl_expr [ Trp ]
+## local_decl_expr -> id Tcolon . type_expr Teq expr Tin expr [ Trp ]
+## param_ -> id Tcolon . type_expr [ Trp Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon
+##
+
+Ill-formed type annotation.
+
+start: Tlp Tid Tcolon Tid Tto
+##
+## Ends in an error in state: 72.
+##
+## local_decl_expr -> id Tcolon type_expr . Tin local_decl_expr [ Trp ]
+## local_decl_expr -> id Tcolon type_expr . Teq expr Tin expr [ Trp ]
+## param_ -> id Tcolon type_expr . [ Trp Tcomma ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr
+##
+
+Ill-formed type annotation.
+
+start: Tf64 Trp
+##
+## Ends in an error in state: 73.
+##
+## list(top_expr) -> top_expr . list(top_expr) [ Teof ]
+##
+## The known suffix of the stack is as follows:
+## top_expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 52, spurious reduction of production cond_expr -> call_expr
+## In state 49, spurious reduction of production lambda_expr -> cond_expr
+## In state 33, spurious reduction of production expr -> lambda_expr
+## In state 87, spurious reduction of production top_expr -> expr
+##
+
+Ill-formed expression.
+
+start: Tstr Tbind Tto
+##
+## Ends in an error in state: 76.
+##
+## export_expr -> str Tbind . id [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## str Tbind
+##
+
+Ill-formed export.
+
+start: Tid Tcolon Tto
+##
+## Ends in an error in state: 80.
+##
+## decl_expr -> id Tcolon . type_expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## decl_expr -> id Tcolon . str type_expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id Tcolon . type_expr Tin local_decl_expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id Tcolon . type_expr Teq expr Tin expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon
+##
+
+Ill-formed declaration.
+
+start: Tid Tcolon Tid Tto
+##
+## Ends in an error in state: 82.
+##
+## decl_expr -> id Tcolon type_expr . [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id Tcolon type_expr . Tin local_decl_expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## local_decl_expr -> id Tcolon type_expr . Teq expr Tin expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon type_expr
+##
+
+Ill-formed declaration.
+
+start: Tid Tcolon Tstr Tto
+##
+## Ends in an error in state: 83.
+##
+## decl_expr -> id Tcolon str . type_expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tcolon str
+##
+
+Ill-formed declaration.
+
+start: Tid Tbind Tto
+##
+## Ends in an error in state: 85.
+##
+## bind_expr -> id Tbind . expr Tin expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## top_bind_expr -> id Tbind . expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tbind
+##
+
+Ill-formed binding.
+
+start: Tid Tbind Tf64 Trp
+##
+## Ends in an error in state: 86.
+##
+## bind_expr -> id Tbind expr . Tin expr [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+## top_bind_expr -> id Tbind expr . [ Tstr Tlp Tid Ti64 Tf64 Teof ]
+##
+## The known suffix of the stack is as follows:
+## id Tbind expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 52, spurious reduction of production cond_expr -> call_expr
+## In state 49, spurious reduction of production lambda_expr -> cond_expr
+## In state 33, spurious reduction of production expr -> lambda_expr
+##
+
+Ill-formed Binding.
+

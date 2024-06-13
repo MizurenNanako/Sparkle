@@ -21,7 +21,16 @@
  (modules syntactics)
  (preprocess
   (pps ppx_sexp_conv))
- (libraries lexical sexplib))
+ (libraries common lexical sexplib))
+
+(library
+ (name error_messages)
+ (modules error_messages))
+
+(library
+ (name parse)
+ (modules parse)
+ (libraries error_messages parser menhirLib lexer))
 
 (menhir
  (modules parser)
@@ -45,4 +54,16 @@
  (modules semantics)
  (preprocess
   (pps ppx_sexp_conv))
- (libraries syntactics typing sexplib))
+ (libraries common syntactics typing concrete sexplib))
+
+(library
+ (name concrete)
+ (modules concrete)
+ (preprocess
+  (pps ppx_sexp_conv))
+ (libraries common typing sexplib))
+
+(library
+ (name immediate)
+ (modules immediate)
+ (libraries common))

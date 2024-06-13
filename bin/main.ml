@@ -1,27 +1,15 @@
 let () =
   let filename = Sys.argv.(1) in
-  let file = In_channel.open_text filename in
-  let lexbuf = Lexing.from_channel file in
-  Lexing.set_filename lexbuf filename;
-  let astl =
-    try Parser.start Lexer.get_token lexbuf with
-    | e ->
-      lexbuf
-      |> Lexical.Range.of_lexbuf
-      |> Lexical.Range.dump stdout
-      |> print_newline;
-      raise e
-  in
+  let astl = Parse.Driver.run filename in
   (* astl |> Syntactics.Format.fmt stdout |> print_newline; *)
   (* astl
      |> List.map Syntactics.AST.sexp_of_expr
      |> List.iter (Sexplib.Sexp.output_hum stdout)
      |> print_newline *)
   try
-    astl
-    |> Semantics.Checking.check_module
-    |> List.iter (fun (n, ty) ->
-      Printf.printf "%s: %s\n" n (Typing.MType.repr ty))
+    astl |> Semantics.Checking.check_module |> ignore
+    (* |> List.iter (fun (n, ty) ->
+       Printf.printf "%s: %s\n" n (Typing.MType.repr ty)) *)
   with
   | Semantics.Checking.TypeError (msg, rng) ->
     Printf.eprintf

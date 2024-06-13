@@ -8,6 +8,7 @@ module Checking = struct
 
   module A = Syntactics.AST
   module M = Typing.MType
+  module C = Concrete.CAST
 
   type id = A.id [@@deriving sexp_of]
   type env = (id * M.t) list [@@deriving sexp_of]

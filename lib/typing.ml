@@ -11,7 +11,7 @@ module MType = struct
     | Msig of t * bool ref
     | Mlambda of t list * t
     | Mpair of t * t
-  [@@deriving sexp_of]
+  [@@deriving sexp]
 
   let of_tid (tid : string) =
     match tid with
