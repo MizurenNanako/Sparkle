@@ -291,7 +291,7 @@ module Format = struct
     match a with
     | [] -> ()
     | a :: tl ->
-      Printf.fprintf out "# entry\n%a\n" (fmt_expr 0) a;
+      Printf.fprintf out "%a\n" (fmt_expr 0) a;
       fmt out tl
   ;;
 end
