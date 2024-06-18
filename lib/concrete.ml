@@ -50,7 +50,7 @@ module CAST = struct
   type cc_module =
     { cc_module_export : (id * MType.t) list
     ; cc_module_import : (id * MType.t) list
-    ; cc_module_expr : cc_expr list
+    ; cc_module_expr : cc_expr
     }
   [@@deriving sexp]
 
@@ -91,5 +91,41 @@ module CAST = struct
 
   let cc_cond brlst cond_ty =
     { cc_expr_desc = CCond brlst; cc_expr_ty = cond_ty }
+  ;;
+
+  let cc_module (expr_lst : cc_expr list) env =
+    let import_lst =
+      List.filter_map
+        (function
+          | name, (MType.Mimport _ as s) -> Some (name, s)
+          | _ -> None)
+        env
+    in
+    let export_lst =
+      List.filter_map
+        (function
+          | name, (MType.Mexport _ as s) -> Some (name, s)
+          | _ -> None)
+        env
+    in
+    let rec toplevel_eliminate (l : cc_expr list) =
+      match l with
+      | [] -> cc_i64 0L
+      | { cc_expr_desc = CTopBind e; _ } :: [] ->
+        cc_bind e.cc_top_bind (cc_i64 0L)
+      | ({ cc_expr_desc = CLambda _; _ } as e) :: [] ->
+        cc_bind (cc_bound "_" e) (cc_i64 0L)
+      | { cc_expr_desc = CNop; _ } :: [] -> assert false
+      | (_ as e) :: [] -> e
+      | { cc_expr_desc = CTopBind e; _ } :: tl ->
+        cc_bind e.cc_top_bind (toplevel_eliminate tl)
+      | hd :: tl ->
+        let bound = cc_bound "_" hd in
+        cc_bind bound (toplevel_eliminate tl)
+    in
+    { cc_module_import = import_lst
+    ; cc_module_export = export_lst
+    ; cc_module_expr = expr_lst |> toplevel_eliminate
+    }
   ;;
 end

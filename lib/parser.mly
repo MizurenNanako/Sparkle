@@ -182,6 +182,13 @@ primary_expr:
         expr_rng = snd i;
     }
 }
+// | posL = "{"; lst = separated_list(",", expr); posR = "}";
+// {
+//     {
+//         expr_desc = ListAtom (lst);
+//         expr_rng = posL, posR;
+//     }
+// }
 | "("; e = expr; ")"; { e }
 
 cond_expr:

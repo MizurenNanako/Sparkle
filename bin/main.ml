@@ -10,7 +10,7 @@ let () =
     astl
     |> Semantics.Checking.check_module
     |> Ir_lisp.CC2CL.cl_of_module
-    |> List.iter (Printf.printf "%a\n" Sexplib.Sexp.output_hum)
+    |> Sexplib.Sexp.output_hum stdout
     |> print_newline
     (* |> List.iter (fun (n, ty) ->
        Printf.printf "%s: %s\n" n (Typing.MType.repr ty)) *)

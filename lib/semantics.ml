@@ -334,23 +334,6 @@ module Checking = struct
                 , a.expr_rng ))
     in
     let expr_lst, env = loop [] [] astl in
-    let import_lst =
-      List.filter_map
-        (function
-          | name, (M.Mimport _ as s) -> Some (name, s)
-          | _ -> None)
-        env
-    in
-    let export_lst =
-      List.filter_map
-        (function
-          | name, (M.Mexport _ as s) -> Some (name, s)
-          | _ -> None)
-        env
-    in
-    { cc_module_import = import_lst
-    ; cc_module_export = export_lst
-    ; cc_module_expr = List.rev expr_lst
-    }
+    cc_module (List.rev expr_lst) env
   ;;
 end
