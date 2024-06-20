@@ -1,6 +1,16 @@
 module Range = struct
   type pos = Lexing.position
-  type t = pos * pos
+
+  let pp_pos formater (pos : pos) =
+    Format.fprintf
+      formater
+      "%s:%i:%i"
+      pos.pos_fname
+      pos.pos_lnum
+      (pos.pos_cnum - pos.pos_bol + 1)
+  ;;
+
+  type t = pos * pos [@@deriving show]
   type 'a ranged = 'a * t
 
   let to_string ((a, b) : t) =
@@ -49,74 +59,72 @@ module Error = struct
 end
 
 module Token = struct
-  type pos = Range.pos
-  type range = Range.t
+  type pos = Range.pos [@@deriving show]
+  type range = Range.t [@@deriving show]
 
   type token =
-    | Tbar of pos
-    | Tcolon of pos
-    | Tlb of pos
-    | Trb of pos
-    | Tlp of pos
-    | Trp of pos
-    | Tlc of pos
-    | Trc of pos
-    | Tcomma of pos
-    | Teq of pos
-    (* | Tquest of pos *)
-    (* | Tsemi of pos *)
-    | Tbind of pos
-    | Tto of pos
-    | Tin of pos
-    | Ti64 of (int64 * range)
-    | Tf64 of (float * range)
-    | Tid of (string * range)
-    | Tstr of (string * range)
+    | Tstr (* str *) of string * range
+    | Tid (* id *) of string * range
+    | Tint (* int *) of int64 * range
+    | Tlp (* ( *) of pos
+    | Trp (* ) *) of pos
+    | Tlb (* [ *) of pos
+    | Trb (* ] *) of pos
+    | Tlc (* { *) of pos
+    | Trc (* } *) of pos
+    | Tcomma (* , *) of pos
+    | Tbar (* | *) of pos
+    | Tquestion (* ? *) of pos
+    | Tadd (* + *) of pos
+    | Tsub (* - *) of pos
+    | Tmul (* * *) of pos
+    | Tdiv (* / *) of pos
+    | Tsup (* ^ *) of pos
+    | Tdot (* . *) of pos
+    | Tcolon (* : *) of pos
+    | Teq (* = *) of pos
+    | Tlt (* < *) of pos
+    | Tgt (* > *) of pos
+    | Tpeq (* == *) of pos
+    | Tpneq (* != *) of pos
+    | Tneq (* <> *) of pos
+    | Tleq (* <= *) of pos
+    | Tgeq (* >= *) of pos
+    | Tinduce (* => *) of pos
+    | Tto (* -> *) of pos
     | Teof
+  [@@deriving show]
 
-  let to_str = function
-    | Tbar _ -> "|"
-    | Tcolon _ -> ":"
-    | Tlb _ -> "["
-    | Trb _ -> "]"
-    | Tlp _ -> "("
-    | Trp _ -> ")"
-    | Tlc _ -> "{"
-    | Trc _ -> "}"
-    | Tcomma _ -> ","
-    | Teq _ -> "="
-    (* | Tquest _ -> ";" *)
-    (* | Tsemi _ -> ";" *)
-    | Tbind _ -> ":="
-    | Tto _ -> "->"
-    | Tin _ -> "=>"
-    | Ti64 (a, _) -> Int64.to_string a
-    | Tf64 (f, _) -> string_of_float f
-    | Tid (i, _) -> i
-    | Tstr (s, _) -> Printf.sprintf "\"%s\"" s
-    | Teof -> "EOF"
-  ;;
-
-  let get_rng = function
-    | Tbar p
-    | Tcolon p
-    | Tlb p
-    | Trb p
-    | Tlp p
-    | Trp p
-    | Tlc p
-    | Trc p
-    (* | Tquest p *)
-    (* | Tsemi p *)
-    | Teq p
-    | Tcomma p -> p, { p with pos_cnum = p.pos_cnum + 1 }
-    | Tbind p | Tto p | Tin p ->
-      p, { p with pos_cnum = p.pos_cnum + 2 }
-    | Ti64 (_, r) | Tf64 (_, r) | Tid (_, r) | Tstr (_, r) -> r
+  let getrng = function
+    | Tstr (_, rng) | Tid (_, rng) | Tint (_, rng) -> rng
+    | Tlp pos
+    | Trp pos
+    | Tlb pos
+    | Trb pos
+    | Tlc pos
+    | Trc pos
+    | Tcomma pos
+    | Tbar pos
+    | Tquestion pos
+    | Tadd pos
+    | Tsub pos
+    | Tmul pos
+    | Tdiv pos
+    | Tsup pos
+    | Tdot pos
+    | Tcolon pos
+    | Teq pos
+    | Tlt pos
+    | Tgt pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 1 }
+    | Tpeq pos
+    | Tpneq pos
+    | Tneq pos
+    | Tleq pos
+    | Tgeq pos
+    | Tinduce pos
+    | Tto pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 2 }
     | Teof -> Lexing.dummy_pos, Lexing.dummy_pos
   ;;
-
-  let get_rng2 a b = Range.join (get_rng a) (get_rng b)
 end
 
 module Literal = struct

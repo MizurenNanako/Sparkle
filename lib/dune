@@ -6,8 +6,8 @@
  (name lexical)
  (modules lexical)
  (preprocess
-  (pps ppx_sexp_conv))
- (libraries sexplib))
+  (pps ppx_show))
+ (libraries sexplib ppx_show.runtime))
 
 (ocamllex lexer)
 
