@@ -5,4 +5,5 @@ module CType = struct
     | Cbytes
     | Cnil
     | Cunit
+    | Cfun of t list * t
 end

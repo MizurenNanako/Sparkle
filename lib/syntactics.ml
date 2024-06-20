@@ -1,7 +1,6 @@
 module AST = struct
   type rng = Lexical.Range.t
   type id = string
-  type ctype = Typing.CType.t
 
   type toplevel =
     { topl_desc : topl_desc
@@ -11,25 +10,38 @@ module AST = struct
   and topl_desc =
     | DeclVar of
         { decl_var_id : id
-        ; decl_var_type : ctype
+        ; decl_var_type : type_expr
         }
     | DeclFun of
         { decl_fun_id : id
-        ; decl_fun_ptype : ctype list
-        ; decl_fun_rtype : ctype
+        ; decl_fun_ptype : type_expr list
+        ; decl_fun_rtype : type_expr
         }
     | ImplVar of
         { impl_var_id : id
-        ; impl_var_type : ctype
+        ; impl_var_type : type_expr
         ; impl_var_val : expr
         }
     | ImplFun of
         { impl_fun_id : id
         ; impl_fun_param : id list
-        ; impl_fun_ptype : ctype list
-        ; impl_fun_rtype : ctype
+        ; impl_fun_ptype : type_expr list
+        ; impl_fun_rtype : type_expr
         ; impl_fun_body : expr
         }
+
+  and type_expr =
+    { type_expr_desc : type_expr_desc
+    ; type_expr_rng : rng
+    }
+
+  and type_expr_desc =
+    | Tint
+    | Tlist
+    | Tbytes
+    | Tnil
+    | Tunit
+    | Tfun of type_expr list * type_expr
 
   and expr =
     { expr_desc : expr_desc

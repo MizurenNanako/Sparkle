@@ -92,6 +92,7 @@ module Token = struct
     | Tgeq (* >= *) of pos
     | Tinduce (* => *) of pos
     | Tto (* -> *) of pos
+    | Tnil (* nil *) of pos
     | Teof
   [@@deriving show]
 
@@ -123,6 +124,7 @@ module Token = struct
     | Tgeq pos
     | Tinduce pos
     | Tto pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 2 }
+    | Tnil pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
     | Teof -> Lexing.dummy_pos, Lexing.dummy_pos
   ;;
 end

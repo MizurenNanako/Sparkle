@@ -85,6 +85,7 @@ rule get_token = parse
 | ">=" { Tgeq (lb ()).lex_start_p }
 | "=>" { Tinduce (lb ()).lex_start_p }
 | "->" { Tto (lb ()).lex_start_p }
+| "nil" { Tnil (lb ()).lex_start_p }
 
 (* | (literal_real as s) { Tf64 (float_of_string s, Range.of_(lb ()) (lb ())) } *)
 | (literal_dec as s) { Tint ((int_of_dec s).data, Range.of_lexbuf (lb ())) }
