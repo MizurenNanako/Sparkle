@@ -2,7 +2,7 @@
 
 This project is being refractoring.
 
-all symbols used:
+## Brief
 
 Top level only allow function declarations, var decl, func impl, var init. And source include.
 
@@ -31,12 +31,16 @@ primitive unary operator:
 
 primitive function:
 
-- `car: [list] -> int` list operation
-- `cdr: [list] -> list` list operation
-- `bsub: [b: bytes, start: int, len: int] -> bytes` substring
-- `blen: [b: bytes] -> int` length
-- `new: [n: int] -> bytes`
-- `del: [bytes] -> unit`
+```m
+car: [list] -> int
+cdr: [list] -> list
+cons: [int, list] -> list
+deref: [int] -> bytes
+substr: [bytes, int, int] -> bytes
+strlen: [bytes] -> int
+new: [int] -> bytes
+del: [bytes] -> unit
+```
 
 operator order:
 
@@ -55,7 +59,7 @@ primitive constant:
 
 basic syntax of top level:
 
-- `fun_name : [t1, t2, ..., tn] -> ret_type` func decl
+- `fun_name : [t1, t2, ..., tn] -> ret_type` func decl, param name optional.
 - `fun_name : [p1: t1, p2: t2, ...] -> ret_type = expr` func impl
 - `var_name : type` var decl
 - `var_name : type = value` var init
@@ -71,3 +75,22 @@ basic syntax of expr:
 - `{a1, a2, a3, ..., an}` list construct expr
 - `a := value` assignment, type is `unit`
 - `expr1; expr2; ...; exprn` compound expression, all `expri` $0<i<n$ typed `unit`, take type of `exprn`.
+- `name1 = value1; name2 = value2; ...; namen = valuen => expr` let-in expr. can only bind value, not functions.
+
+## AST
+
+type expr:
+func type, basic type
+
+top level:
+var decl, func decl, var init, func impl
+
+constant:
+int, string, unit, nil
+
+expr: [with lexical range]
+binary expr, unary expr, call expr, cond expr, list expr, 
+assign expr, compound expr, let-in expr
+
+binary expr: [inline]
+rel expr, arith expr, rev apply expr

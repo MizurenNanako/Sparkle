@@ -20,8 +20,8 @@
  (name syntactics)
  (modules syntactics)
  (preprocess
-  (pps ppx_sexp_conv))
- (libraries common lexical sexplib))
+  (pps ppx_show))
+ (libraries common lexical typing ppx_show.runtime))
 
 (menhir
  (modules parser)
@@ -37,19 +37,19 @@
  (name typing)
  (modules typing)
  (preprocess
-  (pps ppx_sexp_conv))
- (libraries common sexplib))
+  (pps ppx_show))
+ (libraries common ppx_show.runtime))
 
 (library
  (name semantics)
  (modules semantics)
  (preprocess
-  (pps ppx_sexp_conv))
- (libraries syntactics typing sexplib ir))
+  (pps ppx_show))
+ (libraries syntactics typing ppx_show.runtime ir))
 
 (library
  (name ir)
  (modules ir)
  (preprocess
-  (pps ppx_sexp_conv))
- (libraries common sexplib))
+  (pps ppx_show))
+ (libraries common ppx_show.runtime))
