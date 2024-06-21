@@ -66,6 +66,7 @@ module Token = struct
     | Tstr (* str *) of string * range
     | Tid (* id *) of string * range
     | Tint (* int *) of int64 * range
+    (* 1 *)
     | Tlp (* ( *) of pos
     | Trp (* ) *) of pos
     | Tlb (* [ *) of pos
@@ -82,9 +83,12 @@ module Token = struct
     | Tsup (* ^ *) of pos
     | Tdot (* . *) of pos
     | Tcolon (* : *) of pos
+    | Tsemi (* ; *) of pos
     | Teq (* = *) of pos
     | Tlt (* < *) of pos
     | Tgt (* > *) of pos
+    (* 2 *)
+    | Tassign (* := *) of pos
     | Tpeq (* == *) of pos
     | Tpneq (* != *) of pos
     | Tneq (* <> *) of pos
@@ -92,12 +96,23 @@ module Token = struct
     | Tgeq (* >= *) of pos
     | Tinduce (* => *) of pos
     | Tto (* -> *) of pos
+    | Tor (* or *) of pos
+    (* 3 *)
     | Tnil (* nil *) of pos
+    | Tand (* and *) of pos
+    | Tnot (* not *) of pos
+    | Txor (* xor *) of pos
+    | Tshl (* shl *) of pos
+    | Tshr (* shr *) of pos
+    (* 4 *)
+    | Tlshr (* lshr *) of pos
+    | Txnor (* xnor *) of pos
     | Teof
   [@@deriving show]
 
   let getrng = function
     | Tstr (_, rng) | Tid (_, rng) | Tint (_, rng) -> rng
+    (* 1 *)
     | Tlp pos
     | Trp pos
     | Tlb pos
@@ -114,17 +129,26 @@ module Token = struct
     | Tsup pos
     | Tdot pos
     | Tcolon pos
+    | Tsemi pos
     | Teq pos
     | Tlt pos
     | Tgt pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 1 }
+    (* 2 *)
+    | Tassign pos
     | Tpeq pos
     | Tpneq pos
     | Tneq pos
     | Tleq pos
     | Tgeq pos
     | Tinduce pos
-    | Tto pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 2 }
-    | Tnil pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
+    | Tto pos
+    | Tor pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 2 }
+    (* 3 *)
+    | Tnil pos | Tand pos | Tnot pos | Txor pos | Tshl pos | Tshr pos
+      -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
+    (* 4 *)
+    | Tlshr pos | Txnor pos ->
+      pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 4 }
     | Teof -> Lexing.dummy_pos, Lexing.dummy_pos
   ;;
 end

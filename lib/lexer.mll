@@ -59,33 +59,45 @@ rule get_token = parse
     Tstr (s, r)
 }
 
-| "(" { Tlp (lb ()).lex_start_p }
-| ")" { Trp (lb ()).lex_start_p }
-| "[" { Tlb (lb ()).lex_start_p }
-| "]" { Trb (lb ()).lex_start_p }
-| "{" { Tlc (lb ()).lex_start_p }
-| "}" { Trc (lb ()).lex_start_p }
-| "," { Tcomma (lb ()).lex_start_p }
-| "|" { Tbar (lb ()).lex_start_p }
-| "?" { Tquestion (lb ()).lex_start_p }
-| "+" { Tadd (lb ()).lex_start_p }
-| "-" { Tsub (lb ()).lex_start_p }
-| "*" { Tmul (lb ()).lex_start_p }
-| "/" { Tdiv (lb ()).lex_start_p }
-| "^" { Tsup (lb ()).lex_start_p }
-| "." { Tdot (lb ()).lex_start_p }
-| ":" { Tcolon (lb ()).lex_start_p }
-| "=" { Teq (lb ()).lex_start_p }
-| "<" { Tlt (lb ()).lex_start_p }
-| ">" { Tgt (lb ()).lex_start_p }
-| "==" { Tpeq (lb ()).lex_start_p }
-| "!=" { Tpneq (lb ()).lex_start_p }
-| "<>" { Tneq (lb ()).lex_start_p }
-| "<=" { Tleq (lb ()).lex_start_p }
-| ">=" { Tgeq (lb ()).lex_start_p }
-| "=>" { Tinduce (lb ()).lex_start_p }
-| "->" { Tto (lb ()).lex_start_p }
-| "nil" { Tnil (lb ()).lex_start_p }
+| "("    { Tlp (lb ()).lex_start_p }
+| ")"    { Trp (lb ()).lex_start_p }
+| "["    { Tlb (lb ()).lex_start_p }
+| "]"    { Trb (lb ()).lex_start_p }
+| "{"    { Tlc (lb ()).lex_start_p }
+| "}"    { Trc (lb ()).lex_start_p }
+| ","    { Tcomma (lb ()).lex_start_p }
+| "|"    { Tbar (lb ()).lex_start_p }
+| "?"    { Tquestion (lb ()).lex_start_p }
+| "+"    { Tadd (lb ()).lex_start_p }
+| "-"    { Tsub (lb ()).lex_start_p }
+| "*"    { Tmul (lb ()).lex_start_p }
+| "/"    { Tdiv (lb ()).lex_start_p }
+| "^"    { Tsup (lb ()).lex_start_p }
+| "."    { Tdot (lb ()).lex_start_p }
+| ":"    { Tcolon (lb ()).lex_start_p }
+| ";"    { Tsemi (lb ()).lex_start_p }
+| "="    { Teq (lb ()).lex_start_p }
+| "<"    { Tlt (lb ()).lex_start_p }
+| ">"    { Tgt (lb ()).lex_start_p }
+| ":="   { Tassign (lb ()).lex_start_p }
+| "=="   { Tpeq (lb ()).lex_start_p }
+| "!="   { Tpneq (lb ()).lex_start_p }
+| "<>"   { Tneq (lb ()).lex_start_p }
+| "<="   { Tleq (lb ()).lex_start_p }
+| ">="   { Tgeq (lb ()).lex_start_p }
+| "=>"   { Tinduce (lb ()).lex_start_p }
+| "->"   { Tto (lb ()).lex_start_p }
+| "or"   { Tor (lb ()).lex_start_p }
+| "nil"  { Tnil (lb ()).lex_start_p }
+| "and"  { Tand (lb ()).lex_start_p }
+| "not"  { Tnot (lb ()).lex_start_p }
+| "xor"  { Txor (lb ()).lex_start_p }
+| "shl"  { Tshl (lb ()).lex_start_p }
+| "shr"  { Tshr (lb ()).lex_start_p }
+| "lshr" { Tlshr (lb ()).lex_start_p }
+| "xnor" { Txnor (lb ()).lex_start_p }
+
+| eof { Teof }
 
 (* | (literal_real as s) { Tf64 (float_of_string s, Range.of_(lb ()) (lb ())) } *)
 | (literal_dec as s) { Tint ((int_of_dec s).data, Range.of_lexbuf (lb ())) }

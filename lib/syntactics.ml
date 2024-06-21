@@ -8,14 +8,9 @@ module AST = struct
     }
 
   and topl_desc =
-    | DeclVar of
-        { decl_var_id : id
-        ; decl_var_type : type_expr
-        }
-    | DeclFun of
-        { decl_fun_id : id
-        ; decl_fun_ptype : type_expr list
-        ; decl_fun_rtype : type_expr
+    | DeclTop of
+        { top_decl_id : id
+        ; top_decl_type : type_expr
         }
     | ImplVar of
         { impl_var_id : id

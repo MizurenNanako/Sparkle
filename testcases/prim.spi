@@ -1,0 +1,8 @@
+car: [list] -> int
+cdr: [list] -> list
+cons: [int, list] -> list
+deref: [int] -> bytes
+substr: [b: bytes, start: int, len: int] -> bytes
+strlen: [b: bytes] -> int
+new: [n: int] -> bytes
+del: [bytes] -> unit
