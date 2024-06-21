@@ -6,6 +6,9 @@
 
     let lbstk = Stack.create ()
     let lb () = Stack.top lbstk
+
+    let start_p () = (lb ()).Lexing.lex_start_p
+    let curr_p () = (lb ()).Lexing.lex_curr_p
     
     let _run fname = 
         let fch = In_channel.open_text fname in
@@ -14,9 +17,10 @@
         Stack.push lexbuf lbstk
 
     let new_line () = 
-        let lbb = Stack.pop lbstk in
+        (* let lbb = Stack.pop lbstk in
         Lexing.new_line lbb;
-        Stack.push lbb lbstk
+        Stack.push lbb lbstk *)
+        Lexing.new_line (lb ())
 }
 
 let punct         = ['(' ')' '[' ']' '{' '}' '<' '>' 
@@ -98,8 +102,6 @@ rule get_token = parse
 | "lshr" { Tlshr (lb ()).lex_start_p }
 | "xnor" { Txnor (lb ()).lex_start_p }
 
-| eof { Teof }
-
 (* | (literal_real as s) { Tf64 (float_of_string s, Range.of_(lb ()) (lb ())) } *)
 | (literal_dec as s) { Tint ((int_of_dec s).data, Range.of_lexbuf (lb ())) }
 | (literal_oct as s) { Tint ((int_of_oct s).data, Range.of_lexbuf (lb ())) }
@@ -108,8 +110,16 @@ rule get_token = parse
 | identifier as id { Tid (id, Range.of_lexbuf (lb ())) }
 | eof 
 {
-    if Stack.is_empty lbstk then Teof
-    else ( ignore (Stack.pop lbstk); get_token (lb ()) )
+    if Stack.is_empty lbstk then 
+    (
+        raise @@ 
+        LexicalError ("internal error", Lexing.dummy_pos)
+    )
+    else 
+    ( 
+        ignore (Stack.pop lbstk); 
+        get_token (lb ())
+    )
 }
 | _ as c 
 { 
@@ -129,5 +139,12 @@ and get_str buf = parse
 
 {
     let init fname = 
-        _run fname; fun () -> try get_token (lb ()) with Stack.Empty -> Teof
+        _run fname; 
+        fun () -> 
+            (
+                try 
+                    print_int (Stack.length lbstk);
+                    get_token (lb ())
+                with Stack.Empty -> Teof
+            )
 }

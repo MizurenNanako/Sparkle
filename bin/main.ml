@@ -14,4 +14,13 @@ let run_lexer_only () =
   l ()
 ;;
 
-let () = run_lexer_only ()
+let run_parse_only () =
+  let ast = Parse.Driver.run_file Sys.argv.(1) in
+  Printf.printf "%s\n" (Syntactics.AST.show ast)
+;;
+
+let () =
+  ignore (run_lexer_only, run_parse_only);
+  (* run_lexer_only () *)
+  run_parse_only ()
+;;

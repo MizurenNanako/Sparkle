@@ -1,6 +1,6 @@
 (executable
  (public_name spml)
  (name main)
- (libraries lexer)
+ (libraries lexer parse)
  ; (libraries lexer parser common lexical syntactics semantics)
  )

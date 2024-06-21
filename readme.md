@@ -15,6 +15,7 @@ Allowed type:
 - `bytes` sized bytes. object with size and refcnt, pointer on stack.
 - `nil` special type
 - `unit` empty type
+- `(t1, t2, ..., tn) -> rt` function type
 
 primitive binary operator:
 
@@ -23,7 +24,7 @@ primitive binary operator:
 - `== !=` physical comparison
 - `:=` assignment
 - `^` bytes concate
-- `.` reversed apply, `a.f` equals to `f[a]`
+- `.` reversed apply, `a.f[]` equals to `f[a]`
 
 primitive unary operator:
 
@@ -68,14 +69,14 @@ basic syntax of expr:
 
 - `a bop b` bop is one of binary operator
 - `uop a` uop is one of unary operator
-- `? pred1 => expr1 | pred2 => expr2 | ... => exprn` condition expr
+- `? pred1 -> expr1 | pred2 -> expr2 | ... -> exprn` condition expr
 - `a` expr
 - `(a)` expr
 - `f[a1, a2, ..., an]` call expr
 - `{a1, a2, a3, ..., an}` list construct expr
-- `a := value` assignment, type is `unit`
+- `a <- value` assignment, type is `unit`
 - `expr1; expr2; ...; exprn` compound expression, all `expri` $0<i<n$ typed `unit`, take type of `exprn`.
-- `name1 = value1; name2 = value2; ...; namen = valuen => expr` let-in expr. can only bind value, not functions.
+- `name1 := value1, name2 := value2, ..., namen := valuen => expr` let-in expr. can only bind value, not functions.
 
 ## AST
 

@@ -1,8 +1,8 @@
-car: [list] -> int
-cdr: [list] -> list
-cons: [int, list] -> list
-deref: [int] -> bytes
-substr: [bytes, int, int] -> bytes
-strlen: [bytes] -> int
-new: [int] -> bytes
-del: [bytes] -> unit
+car : (list) -> int
+cdr : (list) -> list
+cons : (int, list) -> list
+deref : (int) -> bytes
+substr : (bytes, int, int) -> bytes
+strlen : (bytes) -> int
+new : (int) -> bytes
+del : (bytes) -> unit

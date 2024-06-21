@@ -52,8 +52,13 @@
 %start <t> start
 %type <expr> expr call_expr
 
+// %right ":="
+// %left "|"
+%left "->"
+%left "=>"
+// %nonassoc "?"
+%left ";"
 %right "<-"
-%right ":="
 %left "and" "or" "xor" "xnor"
 %left "=" "<>" "<" ">" "<=" ">=" "==" "!="
 %left "^"
@@ -69,50 +74,21 @@
 start:
 | l = toplevel*; Teof; { l }
 
-// topftype:
-// | id; ":"; ty = type_expr; { ty }
-// | ty = type_expr; { ty }
-
 toplevel:
-// top decl
-| a = id; ":"; ty = type_expr; 
-{
-    {
-        topl_desc = DeclTop {
-            top_decl_id = fst a;
-            top_decl_type = ty;
-        };
-        topl_rng = Range.join (snd a) ty.type_expr_rng;
-    }
-}
-// | a = id; ":"; posL = "["; te = topftype*; "]"; "->"; rt = type_expr;
-// {
-//     {
-//         topl_desc = DeclTop {
-//             top_decl_id = fst a;
-//             top_decl_type = {
-//                 type_expr_desc = Tfun (te, rt);
-//                 type_expr_rng = posL, snd rt.type_expr_rng;
-//             }
-//         };
-//         topl_rng = Range.join (snd a) rt.type_expr_rng;
-//     }
-// }
 // var init
-| a = id; ":"; ty = type_expr; ":="; v = constant; 
+| a = id; ":="; v = constant; 
 {
     {
         topl_desc = ImplVar {
             impl_var_id = fst a;
-            impl_var_type = ty;
             impl_var_val = v;
         };
         topl_rng = Range.join (snd a) v.expr_rng;
     }
 }
 // func impl
-| a = id; ":"; "["; pa = paramlist_expr; "]"; 
-    "->"; rt = type_expr; ":="; b = expr; 
+| a = id; ":"; "["; pa = paramlist_expr; "]";
+    "->"; rt = type_expr; b = expr; 
 {
     {
         topl_desc = ImplFun {
@@ -123,6 +99,31 @@ toplevel:
             impl_fun_body = b;
         };
         topl_rng = Range.join (snd a) b.expr_rng;
+    }
+}
+| a = id; ":"; "["; "]";
+    "->"; rt = type_expr; b = expr; 
+{
+    {
+        topl_desc = ImplFun {
+            impl_fun_id = fst a;
+            impl_fun_param = [];
+            impl_fun_ptype = [];
+            impl_fun_rtype = rt;
+            impl_fun_body = b;
+        };
+        topl_rng = Range.join (snd a) b.expr_rng;
+    }
+}
+// top decl
+| a = id; ":"; ty = type_expr; 
+{
+    {
+        topl_desc = DeclTop {
+            top_decl_id = fst a;
+            top_decl_type = ty;
+        };
+        topl_rng = Range.join (snd a) ty.type_expr_rng;
     }
 }
 
@@ -139,13 +140,16 @@ paramlist_expr_:
 
 type_expr:
 // function type
-| posL = "["; l = type_expr*; "]"; "->"; rt = type_expr; 
+| posL = "("; l = separated_list(",", type_expr); ")"; "->"; rt = type_expr; 
 {
     {
         type_expr_desc = Tfun (l, rt);
         type_expr_rng = posL, snd rt.type_expr_rng;
     }
 }
+| a = simple_type_expr; { a }
+
+simple_type_expr:
 // var type
 | tid = id; 
 {
@@ -154,7 +158,6 @@ type_expr:
         type_expr_rng = snd tid;
     }
 }
-| "("; te = type_expr; ")"; { te }
 
 constant:
 | a = Tint; { {expr_desc = IntConst (fst a); expr_rng = snd a} }
@@ -202,69 +205,80 @@ primary_expr:
         expr_rng = posL, posR;
     }
 }
-| a = expr; "."; c = call_expr 
-{
-    match c with
-    | {expr_desc = CallExpr (fn, args); _} ->
-        {
-            expr_desc = CallExpr (fn, a :: args);
-            expr_rng = Range.join a.expr_rng c.expr_rng;
-        }
-    | _ -> assert false
-}
+// | a = expr; "."; c = call_expr;
+// {
+//     match c with
+//     | {expr_desc = CallExpr (fn, args); _} ->
+//         {
+//             expr_desc = CallExpr (fn, a :: args);
+//             expr_rng = Range.join a.expr_rng c.expr_rng;
+//         }
+//     | _ -> assert false
+// }
+| a = call_expr; { a }
+| a = compound_expr; { a }
 | a = id; { {expr_desc = VarExpr (fst a); expr_rng = snd a} }
 | a = constant; { a }
 
-expr:
-| a = letin_expr; { a }
-
-// letin < compound < cond < call
-
-letin_expr:
-| l = letbind; "=>"; b = compound_expr;
+call_expr:
+| a = expr; "."; b = id; "["; l = separated_list(",", expr); posR = "]";
 {
+    let fn = {
+        expr_desc = VarExpr (fst b);
+        expr_rng = snd b;
+    } in
     {
-        expr_desc = LetinExpr (List.rev (fst l), b);
-        expr_rng = Range.join (snd l) b.expr_rng;
+        expr_desc = CallExpr (fn, a :: l);
+        expr_rng = Range.join a.expr_rng (getrng (Trb posR));
     }
 }
-| b = compound_expr; { b }
-
-letbind:
-| l = letbind; ","; a = id; ":="; b = expr; { (fst a, b) :: fst l, snd l }
-| a = id; ":="; b = expr; { [fst a, b], snd a }
+| a = expr; "["; l = separated_list(",", expr); posR = "]";
+{
+    {
+        expr_desc = CallExpr (a, l);
+        expr_rng = Range.join a.expr_rng (getrng (Trb posR));
+    }
+}
 
 compound_expr:
-| a = compound_expr; ";"; b = cond_expr; 
+| a = expr; ";"; b = expr; 
 {
     {
         expr_desc = CompoundExpr (a, b);
         expr_rng = Range.join a.expr_rng b.expr_rng;
     }
 }
-| b = cond_expr; { b }
+
+expr:
+| a = cond_expr; { a }
+| a = letin_expr; { a }
+| a = primary_expr; { a }
+
+// cond < letin < compound < call
 
 cond_expr:
-| posL = "?"; l = separated_nonempty_list("|", cond_br); "->"; el = letin_expr;
+| posL = "?"; l = separated_nonempty_list("|", cond_br); "->"; el = expr;
 {
     {
         expr_desc = CondExpr (l, el);
         expr_rng = posL, snd el.expr_rng;
     }
 }
-| a = call_expr; { a }
 
 cond_br:
 | p = expr; "->"; e = expr; { (p, e) }
 
-call_expr:
-| a = call_expr; "["; l = separated_list(",", primary_expr); posR = "]";
+letin_expr:
+| l = letbind; "=>"; b = expr;
 {
     {
-        expr_desc = CallExpr (a, l);
-        expr_rng = fst a.expr_rng, posR;
+        expr_desc = LetinExpr (List.rev (fst l), b);
+        expr_rng = Range.join (snd l) b.expr_rng;
     }
 }
-| b = primary_expr; { b }
+
+letbind:
+| l = letbind; ","; a = id; ":="; b = expr; { (fst a, b) :: fst l, snd l }
+| a = id; ":="; b = expr; { [fst a, b], snd a }
 
 id: a = Tid; { a }

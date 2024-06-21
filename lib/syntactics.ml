@@ -1,11 +1,12 @@
 module AST = struct
-  type rng = Lexical.Range.t
-  type id = string
+  type rng = Lexical.Range.t [@@deriving show]
+  type id = string [@@deriving show]
 
   type toplevel =
     { topl_desc : topl_desc
     ; topl_rng : rng
     }
+  [@@deriving show]
 
   and topl_desc =
     | DeclTop of
@@ -14,7 +15,6 @@ module AST = struct
         }
     | ImplVar of
         { impl_var_id : id
-        ; impl_var_type : type_expr
         ; impl_var_val : expr
         }
     | ImplFun of
@@ -76,7 +76,7 @@ module AST = struct
     | OpNega
     | OpNot
 
-  and relop = 
+  and relop =
     | OpEq
     | OpLt
     | OpGt
@@ -86,5 +86,7 @@ module AST = struct
     | OpLeq
     | OpGeq
 
-  type t = toplevel list
+  type t = toplevel list [@@deriving show]
 end
+
+

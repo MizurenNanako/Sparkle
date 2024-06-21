@@ -34,6 +34,11 @@
  (libraries common lexical syntactics menhirLib))
 
 (library
+ (name parse)
+ (modules parse)
+ (libraries parser lexer common lexical syntactics))
+
+(library
  (name typing)
  (modules typing)
  (preprocess
