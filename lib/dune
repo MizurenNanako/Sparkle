@@ -58,3 +58,7 @@
  (preprocess
   (pps ppx_show))
  (libraries common ppx_show.runtime))
+
+(library
+ (name machine)
+ (modules machine))
