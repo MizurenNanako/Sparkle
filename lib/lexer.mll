@@ -79,7 +79,8 @@ rule get_token = parse
 | "="    { Teq (lb ()).lex_start_p }
 | "<"    { Tlt (lb ()).lex_start_p }
 | ">"    { Tgt (lb ()).lex_start_p }
-| ":="   { Tassign (lb ()).lex_start_p }
+| ":="   { Tlet (lb ()).lex_start_p }
+| "<-"   { Tassign (lb ()).lex_start_p }
 | "=="   { Tpeq (lb ()).lex_start_p }
 | "!="   { Tpneq (lb ()).lex_start_p }
 | "<>"   { Tneq (lb ()).lex_start_p }

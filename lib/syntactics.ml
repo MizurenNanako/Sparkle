@@ -31,11 +31,7 @@ module AST = struct
     }
 
   and type_expr_desc =
-    | Tint
-    | Tlist
-    | Tbytes
-    | Tnil
-    | Tunit
+    | Tatom of id
     | Tfun of type_expr list * type_expr
 
   and expr =
@@ -54,7 +50,8 @@ module AST = struct
     | AssignExpr of expr * expr
     | CompoundExpr of expr * expr
     | LetinExpr of (id * expr) list * expr
-    | IntConst of int
+    | VarExpr of id
+    | IntConst of int64
     | StrConst of string
     | UnitConst
     | NilConst
@@ -64,14 +61,30 @@ module AST = struct
     | OpSub
     | OpMul
     | OpDiv
+    | OpAnd
+    | OpOr
+    | OpXor
+    | OpXnor
+    | OpShl
+    | OpShr
+    | OpLshr
 
   and strop = OpSConcat
 
   and uop =
     | OpPosi
     | OpNega
+    | OpNot
 
-  and relop
+  and relop = 
+    | OpEq
+    | OpLt
+    | OpGt
+    | OpPeq
+    | OpPneq
+    | OpNeq
+    | OpLeq
+    | OpGeq
 
   type t = toplevel list
 end

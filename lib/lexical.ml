@@ -63,9 +63,9 @@ module Token = struct
   type range = Range.t [@@deriving show]
 
   type token =
-    | Tstr (* str *) of string * range
-    | Tid (* id *) of string * range
-    | Tint (* int *) of int64 * range
+    | Tstr (* str *) of (string * range)
+    | Tid (* id *) of (string * range)
+    | Tint (* int *) of (int64 * range)
     (* 1 *)
     | Tlp (* ( *) of pos
     | Trp (* ) *) of pos
@@ -88,7 +88,8 @@ module Token = struct
     | Tlt (* < *) of pos
     | Tgt (* > *) of pos
     (* 2 *)
-    | Tassign (* := *) of pos
+    | Tlet (* := *) of pos
+    | Tassign (* <- *) of pos
     | Tpeq (* == *) of pos
     | Tpneq (* != *) of pos
     | Tneq (* <> *) of pos
@@ -134,6 +135,7 @@ module Token = struct
     | Tlt pos
     | Tgt pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 1 }
     (* 2 *)
+    | Tlet pos
     | Tassign pos
     | Tpeq pos
     | Tpneq pos
