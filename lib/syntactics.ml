@@ -54,6 +54,10 @@ module AST = struct
     | AssignExpr of expr * expr
     | CompoundExpr of expr * expr
     | LetinExpr of (id * expr) list * expr
+    | IntConst of int
+    | StrConst of string
+    | UnitConst
+    | NilConst
 
   and arithop =
     | OpAdd

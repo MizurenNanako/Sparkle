@@ -1,5 +1,6 @@
 %{
     open Lexical.Token
+    open Lexical
     open Syntactics.AST
 %}
 
@@ -56,7 +57,7 @@
 %left "shl" "shr" "lshr"
 %left "+" "-"
 %left "*" "/"
-%left UPOS UNEG "not"
+%right UPOS UNEG "not"
 %left "."
 %nonassoc "{" "}"
 %nonassoc "[" "]"
@@ -69,12 +70,41 @@ start:
 
 toplevel:
 // top decl
-| a = id; ":"; ty = type_expr; {}
+| a = id; ":"; ty = type_expr; 
+{
+    {
+        topl_desc = DeclTop {
+            top_decl_id = fst a;
+            top_decl_type = ty;
+        };
+        topl_rng = Range.join (snd a), ty.type_expr_rng;
+    }
+}
 // var init
-| a = id; ":"; ty = type_expr; "="; v = constant; {}
+| a = id; ":"; ty = type_expr; "="; v = constant_expr; 
+{
+    {
+        topl_desc = ImplVar {
+            impl_var_id = fst a;
+            impl_var_type = ty;
+            impl_var_val = v;
+        };
+    }
+}
 // func impl
 | a = id; ":"; "["; pa = paramlist_expr; "]"; 
-    "->"; rt = type_expr; "="; b = expr; {}
+    "->"; rt = type_expr; "="; b = expr; 
+{
+    {
+        topl_desc = ImplFun {
+            impl_fun_id = fst a;
+            impl_fun_param = pa;
+            impl_fun_ptype = pa;
+            impl_fun_rtype = rt;
+            impl_fun_body = b;
+        };
+    }
+}
 
 paramlist_expr:
 | a = id; ":"; te = type_expr; {}
@@ -90,11 +120,35 @@ param_type_expr:
 | a = id?; ":"; te = type_expr; {}
 
 constant:
-| a = Tint; {}
-| a = Tstr; {}
+| a = Tint; 
+{
+    {
+        expr_desc = IntConst (fst a);
+        expr_rng = snd a;
+    }
+}
+| a = Tstr; 
+{
+    {
+        expr_desc = StrConst (fst a);
+        expr_rng = snd a;
+    }
+}
 // unit
-| posL = "("; posR = ")"; {}
-| a = Tnil; {}
+| posL = "("; posR = ")"; 
+{
+    {
+        expr_desc = UnitConst;
+        expr_rng = posL, posR;
+    }
+}
+| a = Tnil; 
+{
+    {
+        expr_desc = NilConst;
+        expr_rng = getrng (Tnil a);
+    }
+}
 
 primary_expr:
 | posL = "("; a = expr; posR = ")"; { a }
@@ -130,8 +184,8 @@ primary_expr:
 
 | posL = "{"; l = separated_list(",", expr); posR = "}"; {}
 | a = expr; "."; c = call_expr {}
-| a = constant; {}
 | a = id; {}
+| a = constant; { a }
 
 expr:
 | a = letin_expr; { a }
