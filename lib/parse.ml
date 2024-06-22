@@ -17,10 +17,11 @@ module Driver = struct
     | Shifting _ ->
       let next = I.resume checkpoint in
       _run2 lex last next
-    | HandlingError _ ->
+    | HandlingError env ->
       (* let next = I.resume checkpoint in *)
       let rng = Lexer.start_p (), Lexer.curr_p () in
-      Printf.eprintf "SyntaxError: %s\n" (R.show rng);
+      let msg = env |> I.current_state_number |> LR_errors.message in
+      Printf.eprintf "SyntaxError at %s:\n%s" (R.show rng) msg;
       exit (-1)
     | InputNeeded _ ->
       let tk = lex () in

@@ -42,18 +42,17 @@ module Check = struct
     | RelExpr (op, l, r) ->
       (* due to design, two side should all be int *)
       let t1, t2 = check_expr env l, check_expr env r in
-      (match t1, t2 with
-       | C.Cint, C.Cint -> C.Cint
-       | C.Cint, _ ->
-         raise
-         @@ TypeError ("should be int: rhs of " ^ A.show_relop op, r.expr_rng)
-       | _, C.Cint ->
-         raise
-         @@ TypeError ("should be int: lhs of " ^ A.show_relop op, l.expr_rng)
-       | _ ->
-         raise
-         @@ TypeError
-              ("should be int: both sides of " ^ A.show_relop op, expr.expr_rng))
+      if C.eq t1 t2
+      then C.Cint
+      else
+        raise
+        @@ TypeError
+             ( Printf.sprintf
+                 "type %s and %s unmatched for %s"
+                 (C.show t1)
+                 (C.show t2)
+                 (A.show_relop op)
+             , expr.expr_rng )
     | UnaryExpr (op, l) ->
       (match check_expr env l with
        | C.Cint -> C.Cint
@@ -69,7 +68,7 @@ module Check = struct
          raise
          @@ TypeError
               ( Printf.sprintf
-                  "cannot apply type %s to type %s"
+                  "cannot apply (%s) to (%s)"
                   (C.show funty)
                   (paramsty |> List.map C.show |> String.concat ", ")
               , expr.expr_rng ))
@@ -77,10 +76,16 @@ module Check = struct
       List.fold_left
         (fun acc (p, e) ->
           if check_expr env p <> C.Cint
-          then raise @@ TypeError ("predicate should have type int", p.expr_rng)
+          then raise @@ TypeError ("predicate should have type <int>", p.expr_rng)
           else if check_expr env e = acc
           then acc
-          else raise @@ TypeError ("branchs should have same type", e.expr_rng))
+          else
+            raise
+            @@ TypeError
+                 ( Printf.sprintf
+                     "these branchs should have same type <%s> with last one"
+                     (C.show acc)
+                 , e.expr_rng ))
         (check_expr env el)
         brlst
     | ListExpr l ->
@@ -128,10 +133,35 @@ module Check = struct
     match top.topl_desc with
     | DeclTop { top_decl_id; top_decl_type } ->
       let ty = check_type_expr top_decl_type in
-      E.add_name top_decl_id ty env
+      (match E.get_local_name top_decl_id env with
+       | None -> E.add_name top_decl_id ty env
+       | Some ty' ->
+         if C.eq ty ty'
+         then env
+         else
+           raise
+           @@ TypeError
+                ( Printf.sprintf
+                    "old decl <%s> and new decl <%s> unmatched"
+                    (C.show ty')
+                    (C.show ty)
+                , top.topl_rng ))
     | ImplVar { impl_var_id; impl_var_val } ->
       let ty = check_expr env impl_var_val in
-      E.add_name impl_var_id ty env
+      let doit () = E.add_name impl_var_id ty env in
+      (match E.get_local_name impl_var_id env with
+       | None -> doit ()
+       | Some ty' ->
+         if C.eq ty ty'
+         then doit ()
+         else
+           raise
+           @@ TypeError
+                ( Printf.sprintf
+                    "decl <%s> and impl <%s> unmatched"
+                    (C.show ty')
+                    (C.show ty)
+                , top.topl_rng ))
     | ImplFun
         { impl_fun_id
         ; impl_fun_param
@@ -139,17 +169,45 @@ module Check = struct
         ; impl_fun_rtype
         ; impl_fun_body
         } ->
-      let env = env |> E.add_name impl_fun_id (check_type_expr impl_fun_rtype) in
-      let env' =
-        env
-        |> E.add_scope impl_fun_id
-        |> E.add_pairs
-             (impl_fun_ptype
-              |> List.map (fun i -> E.Entry (check_type_expr i))
-              |> List.combine impl_fun_param)
+      let paramsty = List.map check_type_expr impl_fun_ptype in
+      let retty = check_type_expr impl_fun_rtype in
+      let ty = C.Cfun (paramsty, retty) in
+      let doit () =
+        let env = env |> E.add_name impl_fun_id ty in
+        let env' =
+          env
+          |> E.add_scope impl_fun_id
+          |> E.add_pairs
+               (impl_fun_ptype
+                |> List.map (fun i -> E.Entry (check_type_expr i))
+                |> List.combine impl_fun_param)
+        in
+        let bodyty = check_expr env' impl_fun_body in
+        if bodyty = retty
+        then env
+        else
+          raise
+          @@ TypeError
+               ( "return type <"
+                 ^ C.show retty
+                 ^ "> and body type <"
+                 ^ C.show bodyty
+                 ^ "> not matched."
+               , top.topl_rng )
       in
-      check_expr env' impl_fun_body |> ignore;
-      env
+      (match E.get_local_name impl_fun_id env with
+       | None -> doit ()
+       | Some ty' ->
+         if C.eq ty ty'
+         then doit ()
+         else
+           raise
+           @@ TypeError
+                ( Printf.sprintf
+                    "decl <%s> and impl <%s> unmatched"
+                    (C.show ty')
+                    (C.show ty)
+                , top.topl_rng ))
   ;;
 
   let check_translation_unit (all : A.t) : unit =

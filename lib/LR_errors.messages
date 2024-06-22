@@ -1,0 +1,1395 @@
+start: Txor
+
+error 0: expecting syntax after .
+start' -> . start [ # ]
+
+start: Tid Tcolon Tid Txor
+
+error 2: expecting syntax after .
+list(toplevel) -> toplevel . list(toplevel) [ Teof ]
+
+start: Tid Txor
+
+error 4: expecting syntax after .
+toplevel -> id . Tlet constant [ Tid Teof ]
+toplevel -> id . Tcolon Tlb paramlist_expr Trb Tto type_expr expr [ Tid Teof ]
+toplevel -> id . Tcolon Tlb Trb Tto type_expr expr [ Tid Teof ]
+toplevel -> id . Tcolon type_expr [ Tid Teof ]
+
+start: Tid Tlet Txor
+
+error 5: expecting syntax after .
+toplevel -> id Tlet . constant [ Tid Teof ]
+
+start: Tid Tlet Tlp Txor
+
+error 8: expecting syntax after .
+constant -> Tlp . Trp [ Tid Teof ]
+
+start: Tid Tcolon Txor
+
+error 12: expecting syntax after .
+toplevel -> id Tcolon . Tlb paramlist_expr Trb Tto type_expr expr [ Tid Teof ]
+toplevel -> id Tcolon . Tlb Trb Tto type_expr expr [ Tid Teof ]
+toplevel -> id Tcolon . type_expr [ Tid Teof ]
+
+start: Tid Tcolon Tlp Txor
+
+error 13: expecting syntax after .
+type_expr -> Tlp . loption(separated_nonempty_list(Tcomma,type_expr)) Trp Tto type_expr [ Tsub Tstr Trp Trb Tquestion Tnot Tnil Tlp Tlc Tint Tid Teof Tcomma Tadd ]
+
+start: Tid Tcolon Tlp Tid Txor
+
+error 14: expecting syntax after .
+separated_nonempty_list(Tcomma,type_expr) -> type_expr . [ Trp ]
+separated_nonempty_list(Tcomma,type_expr) -> type_expr . Tcomma separated_nonempty_list(Tcomma,type_expr) [ Trp ]
+
+start: Tid Tcolon Tlp Tid Tcomma Txor
+
+error 15: expecting syntax after .
+separated_nonempty_list(Tcomma,type_expr) -> type_expr Tcomma . separated_nonempty_list(Tcomma,type_expr) [ Trp ]
+
+start: Tid Tcolon Tlp Trp Txor
+
+error 21: expecting syntax after .
+type_expr -> Tlp loption(separated_nonempty_list(Tcomma,type_expr)) Trp . Tto type_expr [ Tsub Tstr Trp Trb Tquestion Tnot Tnil Tlp Tlc Tint Tid Teof Tcomma Tadd ]
+
+start: Tid Tcolon Tlp Trp Tto Txor
+
+error 22: expecting syntax after .
+type_expr -> Tlp loption(separated_nonempty_list(Tcomma,type_expr)) Trp Tto . type_expr [ Tsub Tstr Trp Trb Tquestion Tnot Tnil Tlp Tlc Tint Tid Teof Tcomma Tadd ]
+
+start: Tid Tcolon Tlb Txor
+
+error 24: expecting syntax after .
+toplevel -> id Tcolon Tlb . paramlist_expr Trb Tto type_expr expr [ Tid Teof ]
+toplevel -> id Tcolon Tlb . Trb Tto type_expr expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Trb Txor
+
+error 25: expecting syntax after .
+toplevel -> id Tcolon Tlb Trb . Tto type_expr expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Trb Tto Txor
+
+error 26: expecting syntax after .
+toplevel -> id Tcolon Tlb Trb Tto . type_expr expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Txor
+
+error 27: expecting syntax after .
+toplevel -> id Tcolon Tlb Trb Tto type_expr . expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tsub Txor
+
+error 28: expecting syntax after .
+primary_expr -> Tsub . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Txor
+
+error 29: expecting syntax after .
+cond_expr -> Tquestion . separated_nonempty_list(Tbar,cond_br) Tto expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tnot Txor
+
+error 30: expecting syntax after .
+primary_expr -> Tnot . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tlp Txor
+
+error 31: expecting syntax after .
+constant -> Tlp . Trp [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> Tlp . expr Trp [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tlc Txor
+
+error 32: expecting syntax after .
+primary_expr -> Tlc . loption(separated_nonempty_list(Tcomma,expr)) Trc [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tadd Txor
+
+error 33: expecting syntax after .
+primary_expr -> Tadd . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tinduce Txor
+
+error 37: expecting syntax after .
+letin_expr -> letbind Tinduce . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tstr
+
+error 38: expecting syntax after .
+letbind -> id . Tlet expr [ Tinduce Tcomma ]
+primary_expr -> id . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Txor
+
+error 39: expecting syntax after .
+letbind -> id Tlet . expr [ Tinduce Tcomma ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tto
+
+error 40: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+letbind -> id Tlet expr . [ Tinduce Tcomma ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Txor Txor
+
+error 41: expecting syntax after .
+primary_expr -> expr Txor . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Txor Tint Tstr
+
+error 42: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Txor expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tsup Txor
+
+error 43: expecting syntax after .
+primary_expr -> expr Tsup . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tsup Tint Tstr
+
+error 44: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tsup expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tsub Txor
+
+error 45: expecting syntax after .
+primary_expr -> expr Tsub . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tsub Tint Tstr
+
+error 46: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tsub expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tmul Txor
+
+error 47: expecting syntax after .
+primary_expr -> expr Tmul . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tmul Tint Tstr
+
+error 48: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tmul expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tlb Txor
+
+error 49: expecting syntax after .
+call_expr -> expr Tlb . loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tlb Tint Trc
+
+error 51: expecting syntax after .
+call_expr -> expr Tlb loption(separated_nonempty_list(Tcomma,expr)) . Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+The known suffix of the stack is as follows:
+expr Tlb loption(separated_nonempty_list(Tcomma,expr))
+WARNING: This example involves spurious reductions.
+This implies that, although the LR(1) items shown above provide an
+accurate view of the past (what has been recognized so far), they
+may provide an INCOMPLETE view of the future (what was expected next).
+In state 53, spurious reduction of production separated_nonempty_list(Tcomma,expr) -> expr
+In state 50, spurious reduction of production loption(separated_nonempty_list(Tcomma,expr)) -> separated_nonempty_list(Tcomma,expr)
+
+start: Tid Tcolon Tlb Trb Tto Tid Tlc Tint Tto
+
+error 53: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+separated_nonempty_list(Tcomma,expr) -> expr . [ Trc Trb ]
+separated_nonempty_list(Tcomma,expr) -> expr . Tcomma separated_nonempty_list(Tcomma,expr) [ Trc Trb ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Txnor Txor
+
+error 54: expecting syntax after .
+primary_expr -> expr Txnor . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Txnor Tint Tstr
+
+error 55: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Txnor expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tshr Txor
+
+error 56: expecting syntax after .
+primary_expr -> expr Tshr . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tshr Tint Tstr
+
+error 57: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tshr expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tdot Txor
+
+error 58: expecting syntax after .
+call_expr -> expr Tdot . id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tdot Tid Txor
+
+error 59: expecting syntax after .
+call_expr -> expr Tdot id . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tdot Tid Tlb Txor
+
+error 60: expecting syntax after .
+call_expr -> expr Tdot id Tlb . loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tdot Tid Tlb Tint Trc
+
+error 61: expecting syntax after .
+call_expr -> expr Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) . Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+The known suffix of the stack is as follows:
+expr Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr))
+WARNING: This example involves spurious reductions.
+This implies that, although the LR(1) items shown above provide an
+accurate view of the past (what has been recognized so far), they
+may provide an INCOMPLETE view of the future (what was expected next).
+In state 53, spurious reduction of production separated_nonempty_list(Tcomma,expr) -> expr
+In state 50, spurious reduction of production loption(separated_nonempty_list(Tcomma,expr)) -> separated_nonempty_list(Tcomma,expr)
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tdiv Txor
+
+error 67: expecting syntax after .
+primary_expr -> expr Tdiv . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tdiv Tint Tstr
+
+error 68: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tdiv expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tadd Txor
+
+error 69: expecting syntax after .
+primary_expr -> expr Tadd . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tadd Tint Tstr
+
+error 70: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tadd expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tshl Txor
+
+error 71: expecting syntax after .
+primary_expr -> expr Tshl . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tshl Tint Tstr
+
+error 72: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tshl expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tpneq Txor
+
+error 73: expecting syntax after .
+primary_expr -> expr Tpneq . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tpneq Tint Tstr
+
+error 74: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tpneq expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tlshr Txor
+
+error 75: expecting syntax after .
+primary_expr -> expr Tlshr . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tlshr Tint Tstr
+
+error 76: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tlshr expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tpeq Txor
+
+error 77: expecting syntax after .
+primary_expr -> expr Tpeq . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tpeq Tint Tstr
+
+error 78: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tpeq expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tneq Txor
+
+error 79: expecting syntax after .
+primary_expr -> expr Tneq . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tneq Tint Tstr
+
+error 80: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tneq expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tlt Txor
+
+error 81: expecting syntax after .
+primary_expr -> expr Tlt . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tlt Tint Tstr
+
+error 82: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tlt expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tleq Txor
+
+error 83: expecting syntax after .
+primary_expr -> expr Tleq . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tleq Tint Tstr
+
+error 84: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tleq expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tgt Txor
+
+error 85: expecting syntax after .
+primary_expr -> expr Tgt . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tgt Tint Tstr
+
+error 86: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tgt expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tgeq Txor
+
+error 87: expecting syntax after .
+primary_expr -> expr Tgeq . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tgeq Tint Tstr
+
+error 88: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tgeq expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Teq Txor
+
+error 89: expecting syntax after .
+primary_expr -> expr Teq . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Teq Tint Tstr
+
+error 90: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Teq expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tsemi Txor
+
+error 91: expecting syntax after .
+compound_expr -> expr Tsemi . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tsemi Tint Tstr
+
+error 92: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr Tsemi expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tor Txor
+
+error 93: expecting syntax after .
+primary_expr -> expr Tor . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tor Tint Tstr
+
+error 94: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tor expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tassign Txor
+
+error 95: expecting syntax after .
+primary_expr -> expr Tassign . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tassign Tint Tstr
+
+error 96: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tassign expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tand Txor
+
+error 97: expecting syntax after .
+primary_expr -> expr Tand . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tand Tint Tstr
+
+error 98: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr Tand expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tlc Tint Tcomma Txor
+
+error 99: expecting syntax after .
+separated_nonempty_list(Tcomma,expr) -> expr Tcomma . separated_nonempty_list(Tcomma,expr) [ Trc Trb ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tinduce Tint Tstr
+
+error 101: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+letin_expr -> letbind Tinduce expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tcomma Txor
+
+error 102: expecting syntax after .
+letbind -> letbind Tcomma . id Tlet expr [ Tinduce Tcomma ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tcomma Tid Txor
+
+error 103: expecting syntax after .
+letbind -> letbind Tcomma id . Tlet expr [ Tinduce Tcomma ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tcomma Tid Tlet Txor
+
+error 104: expecting syntax after .
+letbind -> letbind Tcomma id Tlet . expr [ Tinduce Tcomma ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tid Tlet Tint Tcomma Tid Tlet Tint Tto
+
+error 105: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+letbind -> letbind Tcomma id Tlet expr . [ Tinduce Tcomma ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tgt Tgeq Teq Tdot Tdiv Tcomma Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tadd Tint Tstr
+
+error 106: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> Tadd expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tlc Tint Trb
+
+error 107: expecting syntax after .
+primary_expr -> Tlc loption(separated_nonempty_list(Tcomma,expr)) . Trc [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+The known suffix of the stack is as follows:
+Tlc loption(separated_nonempty_list(Tcomma,expr))
+WARNING: This example involves spurious reductions.
+This implies that, although the LR(1) items shown above provide an
+accurate view of the past (what has been recognized so far), they
+may provide an INCOMPLETE view of the future (what was expected next).
+In state 53, spurious reduction of production separated_nonempty_list(Tcomma,expr) -> expr
+In state 50, spurious reduction of production loption(separated_nonempty_list(Tcomma,expr)) -> separated_nonempty_list(Tcomma,expr)
+
+start: Tid Tcolon Tlb Trb Tto Tid Tlp Tint Tto
+
+error 109: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> Tlp expr . Trp [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Trp Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tnot Tint Tstr
+
+error 111: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> Tnot expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Tint Tto Tint Tto Txor
+
+error 113: expecting syntax after .
+cond_expr -> Tquestion separated_nonempty_list(Tbar,cond_br) Tto . expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Tint Tto Tint Tto Tint Tstr
+
+error 114: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+cond_expr -> Tquestion separated_nonempty_list(Tbar,cond_br) Tto expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Tint Trp
+
+error 115: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+cond_br -> expr . Tto expr [ Tto Tbar ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Tint Tto Txor
+
+error 116: expecting syntax after .
+cond_br -> expr Tto . expr [ Tto Tbar ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Tint Tto Tint Trp
+
+error 117: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+cond_br -> expr Tto expr . [ Tto Tbar ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tgt Tgeq Teq Tdot Tdiv Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tquestion Tint Tto Tint Tbar Txor
+
+error 119: expecting syntax after .
+separated_nonempty_list(Tbar,cond_br) -> cond_br Tbar . separated_nonempty_list(Tbar,cond_br) [ Tto ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tsub Tint Tstr
+
+error 121: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+primary_expr -> Tsub expr . [ Txor Txnor Tto Tsup Tsub Tshr Tshl Tsemi Trp Trc Trb Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tinduce Tid Tgt Tgeq Teq Teof Tdot Tdiv Tcomma Tbar Tassign Tand Tadd ]
+
+start: Tid Tcolon Tlb Trb Tto Tid Tint Tto
+
+error 122: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+toplevel -> id Tcolon Tlb Trb Tto type_expr expr . [ Tid Teof ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Txor
+
+error 123: expecting syntax after .
+paramlist_expr -> paramlist_expr_ . [ Trb ]
+paramlist_expr_ -> paramlist_expr_ . Tcomma id Tcolon type_expr [ Trb Tcomma ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Tcomma Txor
+
+error 124: expecting syntax after .
+paramlist_expr_ -> paramlist_expr_ Tcomma . id Tcolon type_expr [ Trb Tcomma ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Tcomma Tid Txor
+
+error 125: expecting syntax after .
+paramlist_expr_ -> paramlist_expr_ Tcomma id . Tcolon type_expr [ Trb Tcomma ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Tcomma Tid Tcolon Txor
+
+error 126: expecting syntax after .
+paramlist_expr_ -> paramlist_expr_ Tcomma id Tcolon . type_expr [ Trb Tcomma ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Trb Txor
+
+error 129: expecting syntax after .
+toplevel -> id Tcolon Tlb paramlist_expr Trb . Tto type_expr expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Trb Tto Txor
+
+error 130: expecting syntax after .
+toplevel -> id Tcolon Tlb paramlist_expr Trb Tto . type_expr expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Trb Tto Tid Txor
+
+error 131: expecting syntax after .
+toplevel -> id Tcolon Tlb paramlist_expr Trb Tto type_expr . expr [ Tid Teof ]
+
+start: Tid Tcolon Tlb Tid Tcolon Tid Trb Tto Tid Tint Tto
+
+error 132: expecting syntax after .
+call_expr -> expr . Tdot id Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+call_expr -> expr . Tlb loption(separated_nonempty_list(Tcomma,expr)) Trb [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+compound_expr -> expr . Tsemi expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tadd expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsub expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tmul expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tdiv expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshl expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlshr expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tsup expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tassign expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Teq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tlt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgt expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tpneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tneq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tleq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tgeq expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tand expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Tor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+primary_expr -> expr . Txnor expr [ Txor Txnor Tsup Tsub Tshr Tshl Tsemi Tpneq Tpeq Tor Tneq Tmul Tlt Tlshr Tleq Tlb Tid Tgt Tgeq Teq Teof Tdot Tdiv Tassign Tand Tadd ]
+toplevel -> id Tcolon Tlb paramlist_expr Trb Tto type_expr expr . [ Tid Teof ]
+
+start: Tid Tcolon Tlb Tid Txor
+
+error 133: expecting syntax after .
+paramlist_expr_ -> id . Tcolon type_expr [ Trb Tcomma ]
+
+start: Tid Tcolon Tlb Tid Tcolon Txor
+
+error 134: expecting syntax after .
+paramlist_expr_ -> id Tcolon . type_expr [ Trb Tcomma ]
+

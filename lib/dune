@@ -36,7 +36,11 @@
 (library
  (name parse)
  (modules parse)
- (libraries parser lexer common lexical syntactics))
+ (libraries parser lexer common lexical syntactics LR_errors))
+
+(library
+ (name LR_errors)
+ (modules LR_errors))
 
 (library
  (name typing)

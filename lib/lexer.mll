@@ -47,7 +47,7 @@ let exponent      = ['e' 'E' 'p' 'P'] ['+' '-']? ['0'-'9']+
 
 rule get_token = parse
 | '#' [^ '\n']* { get_token (lb ()) }
-| [' ' '\t']+ { get_token (lb ()) }
+| ws+ { get_token (lb ()) }
 | '\n' { new_line (); get_token (lb ()) }
 | '`' ([^ '\n']* as fn)
 {
@@ -108,18 +108,15 @@ rule get_token = parse
 | (literal_hex as s) { Tint ((int_of_hex s).data, Range.of_lexbuf (lb ())) }
 | (literal_bin as s) { Tint ((int_of_bin s).data, Range.of_lexbuf (lb ())) }
 | identifier as id { Tid (id, Range.of_lexbuf (lb ())) }
+
 | eof 
 {
-    if Stack.is_empty lbstk then 
-    (
-        raise @@ 
-        LexicalError ("internal error", Lexing.dummy_pos)
+    let la = Stack.pop lbstk in
+    if Stack.is_empty lbstk then (
+        Stack.push la lbstk; (* last lexbuf *)
+        Teof
     )
-    else 
-    ( 
-        ignore (Stack.pop lbstk); 
-        get_token (lb ())
-    )
+    else get_token (lb ())
 }
 | _ as c 
 { 
@@ -142,9 +139,7 @@ and get_str buf = parse
         _run fname; 
         fun () -> 
             (
-                try 
-                    (* print_int (Stack.length lbstk); *)
-                    get_token (lb ())
-                with Stack.Empty -> Teof
+                (* print_int (Stack.length lbstk); *)
+                get_token (lb ())
             )
 }
