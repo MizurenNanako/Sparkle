@@ -29,6 +29,15 @@ module CType = struct
     | Cdecl t -> show t
   ;;
 
+  let ctype_of_name name : t option =
+    match name with
+    | "int" | "i32" | "i" -> Some Cint
+    | "list" | "lst" -> Some Clist
+    | "unit" | "_" -> Some Cunit
+    | "bytes" | "ptr" | "b" -> Some Cbytes
+    | _ -> None
+  ;;
+
   let eq (a : t) (b : t) : bool = unwrap a = unwrap b
   let teq (a : 'a typed) (b : 'a typed) : bool = eq (snd a) (snd b)
 
@@ -47,9 +56,10 @@ module Env = struct
 
   type env = { env_raw : (string * entry) list }
 
-  let empty () = { env_raw = [] }
+  let empty = { env_raw = [] }
   let add_name name ty env = { env_raw = (name, Entry ty) :: env.env_raw }
   let add_scope name env = { env_raw = (name, Barrier) :: env.env_raw }
+  let add_pairs pairs env = { env_raw = List.append pairs env.env_raw }
 
   let get_name (name : string) (env : env) =
     let rec r tl =

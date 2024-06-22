@@ -111,4 +111,50 @@ module Check = struct
     | UnitConst -> C.Cunit
     | NilConst -> C.Clist
   ;;
+
+  let rec check_type_expr (te : A.type_expr) : C.t =
+    match te.type_expr_desc with
+    | Tatom a ->
+      (match C.ctype_of_name a with
+       | Some ty -> ty
+       | None -> raise @@ TypeError ("unknown type name: " ^ a, te.type_expr_rng))
+    | Tfun (p, r) ->
+      let p = List.map check_type_expr p in
+      let r = check_type_expr r in
+      C.Cfun (p, r)
+  ;;
+
+  let check_toplevel (env : E.env) (top : A.toplevel) : E.env =
+    match top.topl_desc with
+    | DeclTop { top_decl_id; top_decl_type } ->
+      let ty = check_type_expr top_decl_type in
+      E.add_name top_decl_id ty env
+    | ImplVar { impl_var_id; impl_var_val } ->
+      let ty = check_expr env impl_var_val in
+      E.add_name impl_var_id ty env
+    | ImplFun
+        { impl_fun_id
+        ; impl_fun_param
+        ; impl_fun_ptype
+        ; impl_fun_rtype
+        ; impl_fun_body
+        } ->
+      let env = env |> E.add_name impl_fun_id (check_type_expr impl_fun_rtype) in
+      let env' =
+        env
+        |> E.add_scope impl_fun_id
+        |> E.add_pairs
+             (impl_fun_ptype
+              |> List.map (fun i -> E.Entry (check_type_expr i))
+              |> List.combine impl_fun_param)
+      in
+      check_expr env' impl_fun_body |> ignore;
+      env
+  ;;
+
+  let check_translation_unit (all : A.t) : unit =
+    List.fold_left check_toplevel E.empty all |> ignore
+  ;;
 end
+
+module Transpile = struct end

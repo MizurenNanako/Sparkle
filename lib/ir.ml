@@ -55,6 +55,8 @@ module IR = struct
        argument list [l]. The subexpression [f] is evaluated before the
        arguments which are evaluated from left to right *)
     | Call of expr * expr list
+    (* Tail call, same as above but destroys stack. *)
+    | TCall of expr * expr list
     (* The statement [stmt] is evaluated for side effects,
        then [expr] is evaluated for a result *)
     | ESeq of stmt * expr
