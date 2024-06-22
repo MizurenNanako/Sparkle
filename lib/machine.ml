@@ -74,7 +74,7 @@ module MIPS = struct
     | Srl of reg * reg * operand
     | Sub of reg * reg * reg
     | Xor of reg * reg * operand
-    | Li of reg * Word32.word
+    (* | Li of reg * Word32.word *)
     | Slt of reg * reg * operand
     | Sltu of reg * reg * operand
     | Sge of reg * reg * reg
@@ -85,23 +85,27 @@ module MIPS = struct
     | Sleu of reg * reg * reg
     | Seq of reg * reg * reg
     | Sne of reg * reg * reg
-    | B of label
+    (* branch *)
+    (* | B of label *)
     | Beq of reg * reg * label
     | Bgez of reg * label
     | Bgtz of reg * label
     | Blez of reg * label
     | Bltz of reg * label
     | Bne of reg * reg * label
+    (* jump *)
     | J of label
     | Jal of label
     | Jr of reg
     | Jalr of reg * reg
+    (* load *)
     | La of reg * label
     | Lb of reg * reg * Word32.word
     | Lbu of reg * reg * Word32.word
     | Lh of reg * reg * Word32.word
     | Lhu of reg * reg * Word32.word
     | Lw of reg * reg * Word32.word
+    (* store *)
     | Sb of reg * reg * Word32.word
     | Sh of reg * reg * Word32.word
     | Sw of reg * reg * Word32.word
@@ -194,7 +198,7 @@ module MIPS = struct
     | Sub (r1, r2, r3) -> i2s "sub" [ R r1; R r2; R r3 ]
     | Xor (r1, r2, Reg r3) -> i2s "xor" [ R r1; R r2; R r3 ]
     | Xor (r1, r2, Immed w) -> i2s "xori" [ R r1; R r2; W w ]
-    | Li (r, w) -> i2s "li" [ R r; W w ]
+    (* | Li (r, w) -> i2s "li" [ R r; W w ] *)
     | Slt (r1, r2, Reg r3) -> i2s "slt" [ R r1; R r2; R r3 ]
     | Slt (r1, r2, Immed w) -> i2s "slti" [ R r1; R r2; W w ]
     | Sltu (r1, r2, Reg r3) -> i2s "sltu" [ R r1; R r2; R r3 ]
@@ -207,7 +211,7 @@ module MIPS = struct
     | Sleu (r1, r2, r3) -> i2s "sleu" [ R r1; R r2; R r3 ]
     | Sne (r1, r2, r3) -> i2s "sne" [ R r1; R r2; R r3 ]
     | Seq (r1, r2, r3) -> i2s "seq" [ R r1; R r2; R r3 ]
-    | B x -> "\tb " ^ x
+    (* | B x -> "\tb " ^ x *)
     | Beq (r1, r2, x) -> i2s "beq" [ R r1; R r2; L x ]
     | Bgez (r1, x) -> i2s "bgez" [ R r1; L x ]
     | Bgtz (r1, x) -> i2s "bgtz" [ R r1; L x ]

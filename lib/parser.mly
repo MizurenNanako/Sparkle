@@ -21,7 +21,7 @@
 %token <pos> Tsub "-"
 %token <pos> Tmul "*"
 %token <pos> Tdiv "/"
-%token <pos> Tsup "^"
+// %token <pos> Tsup "^"
 %token <pos> Tdot "."
 %token <pos> Tcolon ":"
 %token <pos> Tsemi ";"
@@ -29,7 +29,7 @@
 %token <pos> Tlt "<"
 %token <pos> Tgt ">"
 %token <pos> Tlet ":="
-%token <pos> Tassign "<-"
+// %token <pos> Tassign "<-"
 %token <pos> Tpeq "=="
 %token <pos> Tpneq "!="
 %token <pos> Tneq "<>"
@@ -58,10 +58,10 @@
 %left "=>"
 // %nonassoc "?"
 %left ";"
-%right "<-"
+// %right "<-"
 %left "and" "or" "xor" "xnor"
 %left "=" "<>" "<" ">" "<=" ">=" "==" "!="
-%left "^"
+// %left "^"
 %left "shl" "shr" "lshr"
 %left "+" "-"
 %left "*" "/"
@@ -177,8 +177,8 @@ primary_expr:
 | a = expr; "shr"; b = expr; { {expr_desc = ArithExpr (OpShr, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "lshr"; b = expr; { {expr_desc = ArithExpr (OpLshr, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 
-| a = expr; "^"; b = expr; { {expr_desc = StrOpExpr (OpSConcat, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
-| a = expr; "<-"; b = expr; { {expr_desc = AssignExpr (a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
+// | a = expr; "^"; b = expr; { {expr_desc = StrOpExpr (OpSConcat, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
+// | a = expr; "<-"; b = expr; { {expr_desc = AssignExpr (a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 
 | a = expr; "="; b = expr; { {expr_desc = RelExpr (OpEq, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "<"; b = expr; { {expr_desc = RelExpr (OpLt, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }

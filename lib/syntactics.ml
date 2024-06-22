@@ -41,13 +41,13 @@ module AST = struct
 
   and expr_desc =
     | ArithExpr of arithop * expr * expr
-    | StrOpExpr of strop * expr * expr
+    (* | StrOpExpr of strop * expr * expr *)
     | RelExpr of relop * expr * expr
     | UnaryExpr of uop * expr
     | CallExpr of expr * expr list
     | CondExpr of (expr * expr) list * expr
     | ListExpr of expr list
-    | AssignExpr of expr * expr
+    (* | AssignExpr of expr * expr *)
     | CompoundExpr of expr * expr
     | LetinExpr of (id * expr) list * expr
     | VarExpr of id
@@ -69,8 +69,7 @@ module AST = struct
     | OpShr
     | OpLshr
 
-  and strop = OpSConcat
-
+  (* and strop = OpSConcat *)
   and uop =
     | OpPosi
     | OpNega
@@ -87,4 +86,71 @@ module AST = struct
     | OpGeq
 
   type t = toplevel list [@@deriving show { with_path = false }]
+end
+
+module AST2 = struct
+  type id =
+    | Named of string
+    | Mangled of int
+  [@@deriving show { with_path = false }]
+
+  module C = Typing.CType
+
+  type toplevel =
+    | ImplFunc of
+        { impl_func_param : id list
+        ; impl_func_ptype : C.t list
+        ; impl_func_body : expr
+        }
+    | ImplData of
+        { impl_data_value : const
+        ; impl_data_type : C.t
+        }
+
+  and expr =
+    { expr_desc : expr_desc
+    ; expr_type : C.t
+    }
+
+  and expr_desc =
+    (* arith *)
+    | AddExpr of expr * expr
+    | SubExpr of expr * expr
+    | MulExpr of expr * expr
+    | DivExpr of expr * expr
+    | AndExpr of expr * expr
+    | OrExpr of expr * expr
+    | XorExpr of expr * expr
+    | XnorExpr of expr * expr
+    | ShlExpr of expr * expr
+    | ShrExpr of expr * expr
+    | LshrExpr of expr * expr
+    | SConcatExpr of expr * expr
+    | NotExpr of expr
+    | NegExpr of expr
+    (* rel *)
+    | EqExpr of expr * expr
+    | LtExpr of expr * expr
+    | GtExpr of expr * expr
+    | PeqExpr of expr * expr
+    | PneqExpr of expr * expr
+    | NeqExpr of expr * expr
+    | LeqExpr of expr * expr
+    | GeqExpr of expr * expr
+    (* call *)
+    | CallExpr of expr * expr list
+    (* branch *)
+    | IfElseExpr of expr * expr * expr
+    (* atom *)
+    | VarExpr of id
+    | ConstExpr of const
+    (* stmt *)
+    | CompstExpr of expr * expr
+    (* scope *)
+    | BindExpr of id * expr * expr
+
+  and const =
+    | IntConst of int64
+    | StrConst of string
+    | NilConst
 end

@@ -76,7 +76,7 @@ rule get_token = parse
 | "-"    { Tsub (lb ()).lex_start_p }
 | "*"    { Tmul (lb ()).lex_start_p }
 | "/"    { Tdiv (lb ()).lex_start_p }
-| "^"    { Tsup (lb ()).lex_start_p }
+(* | "^"    { Tsup (lb ()).lex_start_p } *)
 | "."    { Tdot (lb ()).lex_start_p }
 | ":"    { Tcolon (lb ()).lex_start_p }
 | ";"    { Tsemi (lb ()).lex_start_p }
@@ -84,7 +84,7 @@ rule get_token = parse
 | "<"    { Tlt (lb ()).lex_start_p }
 | ">"    { Tgt (lb ()).lex_start_p }
 | ":="   { Tlet (lb ()).lex_start_p }
-| "<-"   { Tassign (lb ()).lex_start_p }
+(* | "<-"   { Tassign (lb ()).lex_start_p } *)
 | "=="   { Tpeq (lb ()).lex_start_p }
 | "!="   { Tpneq (lb ()).lex_start_p }
 | "<>"   { Tneq (lb ()).lex_start_p }

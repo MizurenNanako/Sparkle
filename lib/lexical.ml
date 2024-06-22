@@ -76,7 +76,7 @@ module Token = struct
     | Tsub (* - *) of pos
     | Tmul (* * *) of pos
     | Tdiv (* / *) of pos
-    | Tsup (* ^ *) of pos
+    (* | Tsup (* ^ *) of pos *)
     | Tdot (* . *) of pos
     | Tcolon (* : *) of pos
     | Tsemi (* ; *) of pos
@@ -85,7 +85,7 @@ module Token = struct
     | Tgt (* > *) of pos
     (* 2 *)
     | Tlet (* := *) of pos
-    | Tassign (* <- *) of pos
+    (* | Tassign (* <- *) of pos *)
     | Tpeq (* == *) of pos
     | Tpneq (* != *) of pos
     | Tneq (* <> *) of pos
@@ -123,7 +123,7 @@ module Token = struct
     | Tsub pos
     | Tmul pos
     | Tdiv pos
-    | Tsup pos
+    (* | Tsup pos *)
     | Tdot pos
     | Tcolon pos
     | Tsemi pos
@@ -132,7 +132,7 @@ module Token = struct
     | Tgt pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 1 }
     (* 2 *)
     | Tlet pos
-    | Tassign pos
+    (* | Tassign pos *)
     | Tpeq pos
     | Tpneq pos
     | Tneq pos

@@ -25,7 +25,7 @@ module Check = struct
          raise
          @@ TypeError
               ("should be int: both sides of " ^ A.show_arithop op, expr.expr_rng))
-    | StrOpExpr (op, l, r) ->
+    (* | StrOpExpr (op, l, r) ->
       let t1, t2 = check_expr env l, check_expr env r in
       (match t1, t2 with
        | C.Cbytes, C.Cbytes -> C.Cbytes
@@ -38,17 +38,22 @@ module Check = struct
        | _ ->
          raise
          @@ TypeError
-              ("should be int: both sides of " ^ A.show_strop op, expr.expr_rng))
+              ("should be int: both sides of " ^ A.show_strop op, expr.expr_rng)) *)
+    | RelExpr (A.OpPeq, l, r) | RelExpr (A.OpPneq, l, r) ->
+      (* physical addr always comparable *)
+      let t1, t2 = check_expr env l, check_expr env r in
+      ignore (t1, t2);
+      C.Cint
     | RelExpr (op, l, r) ->
       (* due to design, two side should all be int *)
       let t1, t2 = check_expr env l, check_expr env r in
-      if C.eq t1 t2
+      if C.eq t1 t2 && C.eq t1 C.Cint
       then C.Cint
       else
         raise
         @@ TypeError
              ( Printf.sprintf
-                 "type %s and %s unmatched for %s"
+                 "type %s and %s are uncomparable for %s"
                  (C.show t1)
                  (C.show t2)
                  (A.show_relop op)
@@ -92,7 +97,7 @@ module Check = struct
       (* type erased, still check is valid *)
       List.iter (fun i -> i |> check_expr env |> ignore) l;
       C.Clist
-    | AssignExpr _ -> raise NotImplanted
+    (* | AssignExpr _ -> raise NotImplanted *)
     | CompoundExpr (l, r) ->
       (match check_expr env l, check_expr env r with
        | C.Cunit, ty -> ty
@@ -101,7 +106,12 @@ module Check = struct
       let env =
         List.fold_left
           (fun acc (name, e) ->
-            let ty = check_expr acc e in
+            let ty =
+              match check_expr acc e with
+              | C.Cunit ->
+                raise @@ TypeError ("cannot bind <unit> to variable", e.expr_rng)
+              | ty -> ty
+            in
             E.add_name name ty acc)
           env
           l
