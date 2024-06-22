@@ -143,7 +143,7 @@ and get_str buf = parse
         fun () -> 
             (
                 try 
-                    print_int (Stack.length lbstk);
+                    (* print_int (Stack.length lbstk); *)
                     get_token (lb ())
                 with Stack.Empty -> Teof
             )

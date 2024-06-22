@@ -57,7 +57,7 @@
  (modules ir)
  (preprocess
   (pps ppx_show))
- (libraries common ppx_show.runtime))
+ (libraries common syntactics ppx_show.runtime))
 
 (library
  (name machine)

@@ -46,11 +46,7 @@ module Range = struct
 
   let join (a : t) (b : t) : t = fst a, snd b
   let dump out t = t |> to_string |> Printf.fprintf out "%s"
-
-  let of_lexbuf (lexbuf : Lexing.lexbuf) =
-    lexbuf.lex_start_p, lexbuf.lex_curr_p
-  ;;
-
+  let of_lexbuf (lexbuf : Lexing.lexbuf) = lexbuf.lex_start_p, lexbuf.lex_curr_p
   let sexp_of_t t = Sexplib0.Sexp.Atom (to_string t)
 end
 
@@ -146,8 +142,8 @@ module Token = struct
     | Tto pos
     | Tor pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 2 }
     (* 3 *)
-    | Tnil pos | Tand pos | Tnot pos | Txor pos | Tshl pos | Tshr pos
-      -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
+    | Tnil pos | Tand pos | Tnot pos | Txor pos | Tshl pos | Tshr pos ->
+      pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
     (* 4 *)
     | Tlshr pos | Txnor pos ->
       pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 4 }
@@ -204,9 +200,7 @@ module Literal = struct
     | 'd' | 'D' -> 13L
     | 'e' | 'E' -> 14L
     | 'f' | 'F' -> 15L
-    | _ ->
-      raise
-        (BadLiteral (Printf.sprintf "Not number charactor: %c" ch))
+    | _ -> raise (BadLiteral (Printf.sprintf "Not number charactor: %c" ch))
   ;;
 
   let _int_folder_maker base (acc : integer) ch =
@@ -224,12 +218,10 @@ module Literal = struct
        | Normal -> { acc with size = Long }
        | Long -> { acc with size = LongLong }
        | LongLong -> raise (BadLiteral "Too much suffix"))
-    | 'u' | 'U' | 'x' | 'X' | 'b' | 'B' ->
-      { acc with sign = Unsigned }
+    | 'u' | 'U' | 'x' | 'X' | 'b' | 'B' -> { acc with sign = Unsigned }
     | '\'' | '+' -> acc
     | '-' -> { acc with data = Int64.neg acc.data }
-    | _ as nch ->
-      { acc with data = Int64.add (adv acc.data) (ord nch) }
+    | _ as nch -> { acc with data = Int64.add (adv acc.data) (ord nch) }
   ;;
 
   let int_of_dec (data : string) =
@@ -267,9 +259,7 @@ module Literal = struct
   ;;
 
   (* This works surprising well. *)
-  let char_of_lit (data : string) =
-    Int64.of_int (int_of_char data.[1])
-  ;;
+  let char_of_lit (data : string) = Int64.of_int (int_of_char data.[1])
 
   (* useless *)
   (* let string_of_lit (data : string) = String.sub data 1 (String.length data - 2) *)
@@ -280,9 +270,7 @@ module Literal = struct
     let rec cnv (d : int64) =
       match d with
       | (0L | 1L | 2L | 3L | 4L | 5L | 6L | 7L | 8L | 9L) as t ->
-        Buffer.add_char
-          buf
-          (char_of_int (Int64.to_int t + int_of_char '0'))
+        Buffer.add_char buf (char_of_int (Int64.to_int t + int_of_char '0'))
       | _ ->
         let dr = Int64.unsigned_rem d 10L in
         let dd = Int64.unsigned_div (Int64.sub d dr) 10L in

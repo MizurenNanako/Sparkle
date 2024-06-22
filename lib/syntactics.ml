@@ -1,12 +1,12 @@
 module AST = struct
-  type rng = Lexical.Range.t [@@deriving show]
-  type id = string [@@deriving show]
+  type rng = Lexical.Range.t [@@deriving show { with_path = false }]
+  type id = string [@@deriving show { with_path = false }]
 
   type toplevel =
     { topl_desc : topl_desc
     ; topl_rng : rng
     }
-  [@@deriving show]
+  [@@deriving show { with_path = false }]
 
   and topl_desc =
     | DeclTop of
@@ -86,7 +86,5 @@ module AST = struct
     | OpLeq
     | OpGeq
 
-  type t = toplevel list [@@deriving show]
+  type t = toplevel list [@@deriving show { with_path = false }]
 end
-
-

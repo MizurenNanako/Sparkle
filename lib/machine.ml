@@ -169,18 +169,8 @@ module MIPS = struct
     else Word32.toString w
   ;;
 
-  let i2as (i : string) ((r1 : reg), (r2 : reg), (w : Word32.word))
-    : string
-    =
-    "\t"
-    ^ i
-    ^ "\t"
-    ^ reg2string r1
-    ^ ", "
-    ^ w2s w
-    ^ "("
-    ^ reg2string r2
-    ^ ")"
+  let i2as (i : string) ((r1 : reg), (r2 : reg), (w : Word32.word)) : string =
+    "\t" ^ i ^ "\t" ^ reg2string r1 ^ ", " ^ w2s w ^ "(" ^ reg2string r2 ^ ")"
   ;;
 
   (* Converts an instruction to a string *)
