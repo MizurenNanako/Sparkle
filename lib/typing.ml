@@ -51,21 +51,56 @@ end
 
 module Env = struct
   type entry =
-    | Entry of CType.t
+    | Entry of CType.t * int
     | Barrier
 
-  type env = { env_raw : (string * entry) list }
+  type env =
+    { env_raw : (string * entry) list
+    ; env_nextid : int
+    }
 
-  let empty = { env_raw = [] }
-  let add_name name ty env = { env_raw = (name, Entry ty) :: env.env_raw }
-  let add_scope name env = { env_raw = (name, Barrier) :: env.env_raw }
-  let add_pairs pairs env = { env_raw = List.append pairs env.env_raw }
+  let empty = { env_raw = []; env_nextid = 0 }
+
+  let add_name name ty env =
+    { env_raw = (name, Entry (ty, env.env_nextid)) :: env.env_raw
+    ; env_nextid = succ env.env_nextid
+    }
+  ;;
+
+  let add_scope name env =
+    { env_raw = (name, Barrier) :: env.env_raw; env_nextid = env.env_nextid }
+  ;;
+
+  let add_pairs pairs env =
+    let num = ref env.env_nextid in
+    { env_raw =
+        List.append
+          (List.map
+             (fun (a, b) ->
+               let id = !num in
+               incr num;
+               a, Entry (b, id))
+             pairs)
+          env.env_raw
+    ; env_nextid = !num
+    }
+  ;;
 
   let get_name (name : string) (env : env) =
     let rec r tl =
       match tl with
       | [] -> None
-      | (a1, Entry ty) :: tl -> if a1 = name then Some ty else r tl
+      | (a1, Entry (ty, _)) :: tl -> if a1 = name then Some ty else r tl
+      | _ :: tl -> r tl
+    in
+    r env.env_raw
+  ;;
+
+  let get_name' (name : string) (env : env) =
+    let rec r tl =
+      match tl with
+      | [] -> None
+      | (a1, Entry (ty, id)) :: tl -> if a1 = name then Some (ty, id) else r tl
       | _ :: tl -> r tl
     in
     r env.env_raw
@@ -84,7 +119,16 @@ module Env = struct
   let get_local_name (name : string) (env : env) =
     let rec r tl =
       match tl with
-      | (a1, Entry ty) :: tl -> if a1 = name then Some ty else r tl
+      | (a1, Entry (ty, _)) :: tl -> if a1 = name then Some ty else r tl
+      | _ -> None
+    in
+    r env.env_raw
+  ;;
+
+  let get_local_name' (name : string) (env : env) =
+    let rec r tl =
+      match tl with
+      | (a1, Entry (ty, id)) :: tl -> if a1 = name then Some (ty, id) else r tl
       | _ -> None
     in
     r env.env_raw
@@ -93,7 +137,7 @@ module Env = struct
   let is_local_name_type_eq (name : string) (ty : CType.t) (env : env) =
     let rec r tl =
       match tl with
-      | (a1, Entry ty') :: tl ->
+      | (a1, Entry (ty', _)) :: tl ->
         if a1 = name then Some (CType.eq ty ty') else r tl
       | _ -> None
     in
@@ -104,7 +148,7 @@ module Env = struct
     let rec r tl =
       match tl with
       | [] -> None
-      | (a1, Entry ty') :: tl ->
+      | (a1, Entry (ty', _)) :: tl ->
         if a1 = name then Some (CType.eq ty ty') else r tl
       | _ :: tl -> r tl
     in

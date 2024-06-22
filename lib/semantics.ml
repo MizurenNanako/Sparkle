@@ -189,7 +189,7 @@ module Check = struct
           |> E.add_scope impl_fun_id
           |> E.add_pairs
                (impl_fun_ptype
-                |> List.map (fun i -> E.Entry (check_type_expr i))
+                |> List.map check_type_expr
                 |> List.combine impl_fun_param)
         in
         let bodyty = check_expr env' impl_fun_body in
