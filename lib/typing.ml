@@ -96,7 +96,7 @@ module Env = struct
   let add_scope name env = { env with env_raw = (name, Barrier) :: env.env_raw }
 
   let add_args (pairs : (string * CType.t) list) (env : env) : env * id list =
-    let argnext = ref 0 in
+    let argnext = ref env.env_nextid in
     let ids = ref [] in
     let pairs =
       List.map
@@ -107,7 +107,8 @@ module Env = struct
           s, Entry (t, IdArg the_arg))
         pairs
     in
-    { env with env_raw = List.append pairs env.env_raw }, !ids
+    ( { env with env_raw = List.append pairs env.env_raw; env_nextid = !argnext }
+    , !ids )
   ;;
 
   let get_name (name : string) (env : env) =

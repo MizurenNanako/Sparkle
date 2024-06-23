@@ -1,2 +1,2 @@
-fbnc := 5
+fbnc := 5.fbnc[]
 

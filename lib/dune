@@ -1,4 +1,8 @@
 (library
+ (name stack_ir)
+ (modules stack_ir))
+
+(library
  (name common)
  (modules common))
 

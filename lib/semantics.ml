@@ -162,6 +162,11 @@ module Check = struct
 
   let _match_and_doit the_id the_ty the_env the_rng the_doit =
     match E.is_local_name_type_eq' the_id the_ty the_env with
+    | Some (true, C.Cdecl _) ->
+      (* allow old sig *)
+      the_doit the_env
+    | Some (true, _) ->
+      raise @@ TypeError ("name redefined", the_rng)
     | Some (false, ty') ->
       raise
       @@ TypeError
@@ -170,9 +175,6 @@ module Check = struct
                (C.show ty')
                (C.show the_ty)
            , the_rng )
-    | Some (true, C.Cdecl _) ->
-      (* remove old sig *)
-      the_doit the_env
     | _ -> the_doit the_env
   ;;
 
