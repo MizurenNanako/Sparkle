@@ -95,12 +95,14 @@ module AST2 = struct
 
   type toplevel =
     | ImplFunc of
-        { impl_func_param : id list
+        { impl_func_id : id
+        ; impl_func_param : id list
         ; impl_func_ptype : C.t list
         ; impl_func_body : expr
         }
     | ImplData of
-        { impl_data_value : expr
+        { impl_data_id : id
+        ; impl_data_value : expr
         ; impl_data_type : C.t
         }
   [@@deriving show { with_path = false }]

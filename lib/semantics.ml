@@ -170,14 +170,17 @@ module Check = struct
                (C.show ty')
                (C.show the_ty)
            , the_rng )
-    | _ -> the_doit ()
+    | Some (true, C.Cdecl _) ->
+      (* remove old sig *)
+      the_doit the_env
+    | _ -> the_doit the_env
   ;;
 
   let check_toplevel (env : E.env) (top : A.toplevel) : E.env * X.toplevel option =
     match top.topl_desc with
     | A.DeclTop { top_decl_id; top_decl_type } ->
-      let ty = check_type_expr top_decl_type in
-      let doit () =
+      let ty = C.Cdecl (check_type_expr top_decl_type) in
+      let doit env =
         let env = E.add_cname top_decl_id ty env in
         env, None
       in
@@ -185,10 +188,13 @@ module Check = struct
     | A.ImplVar { impl_var_id; impl_var_val } ->
       (* get the type and code *)
       let ty, cc = check_expr env impl_var_val in
-      let doit () =
+      let doit env =
         (* push it to const entry *)
-        let env = E.add_cname impl_var_id ty env in
-        env, Some (X.ImplData { impl_data_value = cc; impl_data_type = ty })
+        let env, id = E.add_cname' impl_var_id ty env in
+        ( env
+        , Some
+            (X.ImplData
+               { impl_data_value = cc; impl_data_type = ty; impl_data_id = id }) )
       in
       _match_and_doit impl_var_id ty env top.topl_rng doit
     | A.ImplFun
@@ -201,9 +207,9 @@ module Check = struct
       let retty = check_type_expr impl_fun_rtype in
       let paramty = List.map check_type_expr impl_fun_ptype in
       let ty = C.Cfun (paramty, retty) in
-      let doit () =
+      let doit env =
         (* construct const label *)
-        let env = E.add_cname impl_fun_id ty env in
+        let env, id = E.add_cname' impl_fun_id ty env in
         (* construct param list *)
         let pairs = List.combine impl_fun_param paramty in
         (* construct inner env, add scope barrier *)
@@ -225,6 +231,7 @@ module Check = struct
                  { impl_func_param = arg_ids
                  ; impl_func_ptype = paramty
                  ; impl_func_body = cc
+                 ; impl_func_id = id
                  }) )
       in
       _match_and_doit impl_fun_id ty env top.topl_rng doit

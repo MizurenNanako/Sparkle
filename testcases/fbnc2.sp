@@ -1,7 +1,7 @@
+main : () -> int
 fib0 : (int) -> int
 fib1 : (int) -> int
 fib2 : (int) -> int
-main : () -> int
 
 main : [] -> int fib0[4]
 

@@ -68,16 +68,9 @@ module Env = struct
     ; env_nextid : int
     ; env_nextcid : int
     }
-    [@@deriving show { with_path = false }]
+  [@@deriving show { with_path = false }]
 
   let empty = { env_raw = []; env_nextid = 0; env_nextcid = 0 }
-
-  let add_name name ty env =
-    { env with
-      env_raw = (name, Entry (ty, IdTmp env.env_nextid)) :: env.env_raw
-    ; env_nextid = succ env.env_nextid
-    }
-  ;;
 
   let add_name' name ty env =
     let id = env.env_nextid in
@@ -88,22 +81,18 @@ module Env = struct
     , IdTmp id )
   ;;
 
-  let add_cname name ty env =
-    { env with
-      env_raw = (name, Entry (ty, IdCst env.env_nextcid)) :: env.env_raw
-    ; env_nextcid = succ env.env_nextcid
-    }
-  ;;
+  let add_name name ty env = add_name' name ty env |> fst
 
   let add_cname' name ty env =
-    let id = env.env_nextid in
+    let id = env.env_nextcid in
     ( { env with
-        env_raw = (name, Entry (ty, IdTmp env.env_nextcid)) :: env.env_raw
+        env_raw = (name, Entry (ty, IdCst env.env_nextcid)) :: env.env_raw
       ; env_nextcid = succ env.env_nextcid
       }
-    , IdTmp id )
+    , IdCst id )
   ;;
 
+  let add_cname name ty env = add_cname' name ty env |> fst
   let add_scope name env = { env with env_raw = (name, Barrier) :: env.env_raw }
 
   let add_args (pairs : (string * CType.t) list) (env : env) : env * id list =
@@ -199,4 +188,19 @@ module Env = struct
     in
     r env.env_raw
   ;;
+
+  (* get recent one sig of name, destory it, set next to its id *)
+  let hang_up (name : string) (env : env) : env * int =
+    let rec r acc tl =
+      match tl with
+      | [] -> raise @@ Failure "hang_up"
+      | ((a1, Entry (CType.Cdecl _, IdCst id)) as the) :: tl ->
+        if a1 = name then List.rev_append acc tl, id else r (the :: acc) tl
+      | (_ as the) :: _ -> r (the :: acc) tl
+    in
+    let fixed, id = r [] env.env_raw in
+    { env with env_raw = fixed; env_nextcid = id }, env.env_nextcid
+  ;;
+
+  let hang_down (cid : int) (env : env) : env = { env with env_nextcid = cid }
 end

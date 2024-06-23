@@ -1,4 +1,5 @@
 gvar := 20
+gvar := 30
 
 fbnc : [n: int] -> int
     n' :=
