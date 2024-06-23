@@ -11,6 +11,6 @@ fbnc : [n: int] -> int
     => n'
 
 
-main : [_ : unit] -> int
+main : [] -> int
     ret := fbnc[gvar]
     => ret

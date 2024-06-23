@@ -89,10 +89,7 @@ module AST = struct
 end
 
 module AST2 = struct
-  type id =
-    | Named of string
-    | Mangled of int
-  [@@deriving show { with_path = false }]
+  type id = Typing.Env.id [@@deriving show { with_path = false }]
 
   module C = Typing.CType
 
@@ -103,42 +100,20 @@ module AST2 = struct
         ; impl_func_body : expr
         }
     | ImplData of
-        { impl_data_value : const
+        { impl_data_value : expr
         ; impl_data_type : C.t
         }
+  [@@deriving show { with_path = false }]
 
   and expr =
-    { expr_desc : expr_desc
-    ; expr_type : C.t
-    }
-
-  and expr_desc =
     (* arith *)
-    | AddExpr of expr * expr
-    | SubExpr of expr * expr
-    | MulExpr of expr * expr
-    | DivExpr of expr * expr
-    | AndExpr of expr * expr
-    | OrExpr of expr * expr
-    | XorExpr of expr * expr
-    | XnorExpr of expr * expr
-    | ShlExpr of expr * expr
-    | ShrExpr of expr * expr
-    | LshrExpr of expr * expr
-    | SConcatExpr of expr * expr
+    | ArithExpr of arithop * expr * expr
+    (* | SConcatExpr of expr * expr *)
     | NotExpr of expr
     | NegExpr of expr
-    (* rel *)
-    | EqExpr of expr * expr
-    | LtExpr of expr * expr
-    | GtExpr of expr * expr
-    | PeqExpr of expr * expr
-    | PneqExpr of expr * expr
-    | NeqExpr of expr * expr
-    | LeqExpr of expr * expr
-    | GeqExpr of expr * expr
     (* call *)
     | CallExpr of expr * expr list
+    | PrimExpr of string * expr list
     (* branch *)
     | IfElseExpr of expr * expr * expr
     (* atom *)
@@ -151,6 +126,53 @@ module AST2 = struct
 
   and const =
     | IntConst of int64
-    | StrConst of string
+    | StrConst of bytes
+    | UnitConst
     | NilConst
+
+  and arithop =
+    | OpAdd
+    | OpSub
+    | OpMul
+    | OpDiv
+    | OpAnd
+    | OpOr
+    | OpXor
+    | OpXnor
+    | OpShl
+    | OpShr
+    | OpLshr
+    | OpEq
+    | OpLt
+    | OpGt
+    | OpPeq
+    | OpPneq
+    | OpNeq
+    | OpLeq
+    | OpGeq
+
+  let arithop_cnv = function
+    | AST.OpAdd -> OpAdd
+    | AST.OpSub -> OpSub
+    | AST.OpMul -> OpMul
+    | AST.OpDiv -> OpDiv
+    | AST.OpAnd -> OpAnd
+    | AST.OpOr -> OpOr
+    | AST.OpXor -> OpXor
+    | AST.OpXnor -> OpXnor
+    | AST.OpShl -> OpShl
+    | AST.OpShr -> OpShr
+    | AST.OpLshr -> OpLshr
+  ;;
+
+  let relop_cnv = function
+    | AST.OpEq -> OpEq
+    | AST.OpLt -> OpLt
+    | AST.OpGt -> OpGt
+    | AST.OpPeq -> OpPeq
+    | AST.OpPneq -> OpPneq
+    | AST.OpNeq -> OpNeq
+    | AST.OpLeq -> OpLeq
+    | AST.OpGeq -> OpGeq
+  ;;
 end
