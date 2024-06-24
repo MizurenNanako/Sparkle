@@ -35,7 +35,7 @@ module CType = struct
     | "int" | "i32" | "i" -> Some Cint
     | "list" | "lst" -> Some Clist
     | "unit" | "_" -> Some Cunit
-    | "bytes" | "ptr" | "b" -> Some Cbytes
+    | "str" | "string" | "bytes" | "ptr" | "b" -> Some Cbytes
     | _ -> None
   ;;
 
@@ -107,8 +107,7 @@ module Env = struct
           s, Entry (t, IdArg the_arg))
         pairs
     in
-    ( { env with env_raw = List.append pairs env.env_raw; env_nextid = !argnext }
-    , !ids )
+    { env with env_raw = List.append pairs env.env_raw }, !ids
   ;;
 
   let get_name (name : string) (env : env) =
@@ -157,6 +156,19 @@ module Env = struct
       | _ -> None
     in
     r env.env_raw
+  ;;
+
+  let impl_cname' name ty env =
+    match get_local_name' name env with
+    | None ->
+      let id = env.env_nextcid in
+      ( { env with
+          env_raw = (name, Entry (ty, IdCst env.env_nextcid)) :: env.env_raw
+        ; env_nextcid = succ env.env_nextcid
+        }
+      , IdCst id )
+    | Some (_, id) ->
+      { env with env_raw = (name, Entry (ty, id)) :: env.env_raw }, id
   ;;
 
   let is_local_name_type_eq (name : string) (ty : CType.t) (env : env) =

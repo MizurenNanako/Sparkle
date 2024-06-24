@@ -3,6 +3,11 @@
  (modules stack_ir))
 
 (library
+ (name ir_cnv)
+ (modules ir_cnv)
+ (libraries common stack_ir ir syntactics semantics typing))
+
+(library
  (name common)
  (modules common))
 

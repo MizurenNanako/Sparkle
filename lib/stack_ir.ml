@@ -41,16 +41,15 @@ module StkIR = struct
     (* call to label, assuming all parameters
        pushed into stack in definition order,
        for their id's order are already reversed. *)
-    | PreCall1 (* this is to allocate return value (4 bytes) *)
-    | PreCall2 (* this is to allocate return value (8 bytes) *)
+    | PreCall (* this is to allocate return value (4 bytes) *)
+    (* | PreCall2 this is to allocate return value (8 bytes) *)
     (* after pre, push args, then call *)
     (* | PreArg *)
     | Call of string
-    | PreTCall (* get to the first arg, set its addr to $t8 *)
-    | TArg (* push but respect $t8 *)
-    | TCall of string (* tail call *)
+    (* tail recursive, copy args, rewind stack. *)
+    (* | TailRec *)
     (* return *)
-    | Ret
+    | Ret of int (* need argscnt, $sp = ret pos *)
     | JumpAddr (* pop addr, jump to addr *)
     (* branch to label *)
     | Beq of string
@@ -63,13 +62,18 @@ module StkIR = struct
     | Bleu of string
     | Bgtu of string
     | Bgeu of string
+    (* acturally useable *)
+    | Blez of string
+    | Bgtz of string
     (* syscall *)
     | SysCall of syscall_mode
     (* load func args *)
     | LoadArg of int
+    | LoadTmp of int
     (* store return value *)
-    | StoreRet1
-    | StoreRet2
+    | StoreRet of int
+  (* need offset *)
+  (* | StoreRet2 *)
 
   and syscall_mode =
     | SysPrintInt (* data *)
@@ -84,6 +88,30 @@ module StkIR = struct
     | SysExit
     | SysPrintChar (* char *)
     | SysReadChar
+
+  type manager =
+    { manager_next_label_id : int
+    ; manager_next_data_id : int
+    }
+
+  (*
+     frame:
+     fp+n | return value
+     ...
+     fp+8 | arg1
+     fp+4 | arg0
+     fp   | --------frame---------
+     fp-4 | old fp
+     fp-8 | old ra
+     fp-12| tmp1
+  *)
+
+  type frame =
+    { frame_id : int
+    ; frame_args_cnt : int (* return value is at fp+(args_cnt * 4)+4 *)
+    ; frame_tmp_cnt : int (* allocate 4*tmp_cnt *)
+    ; frame_content : instruction list
+    }
 
   let syscall_num = function
     | SysPrintInt -> "1"
@@ -139,30 +167,27 @@ module StkIR = struct
     | LoadLabel lab -> [ "la $t1, " ^ lab; "push $t1" ]
     | LoadConst name -> [ "lw $t1, " ^ name; "push $t1" ]
     | LoadAddr offset -> [ "pop $t2"; sprintf "lw $1, %i($2)" offset; "push $t1" ]
+    | LoadArg i -> [ sprintf "lw $t1, %i($fp)" ((i * 4) + 4); "push $t1" ]
+    | LoadTmp i -> [ sprintf "lw $t1, %i($fp)" ((-i * 4) - 8); "push $t1" ]
     | StoreAddr offset -> [ "pop $t2"; "pop $t1"; sprintf "sw $t1 %i($2)" offset ]
     | JumpLabel label -> [ "j " ^ label ]
-    | PreCall1 -> [ "addi $sp, $sp, -4"; "move $a3 $sp" ]
-    | PreCall2 -> [ "addi $sp, $sp, -8"; "move $a3 $sp" ]
-    | Call label -> [ "push $ra"; "push $fp"; "addi $fp, $sp, 8"; "jal " ^ label ]
-    | PreTCall -> [ "move $t8, a3" ]
-    | TArg -> [ "pop t1"; "sw $t1, $t8"; "addi $t8, $t8, -4" ]
-    | TCall label ->
-      [ "lw $ra, -4($fp)" (* retrive old $ra *)
-      ; "move $sp, $t8" (* restore $sp right at last arg *)
-      ; "push $ra" (* same as call *)
-      ; "push $fp" (* same as call *)
-      ; "addi $fp, $sp, 8" (* same as call *)
-      ; "jal " ^ label (* same as call *)
+    | PreCall -> [ "addi $sp, $sp, -4"; "move $a3 $sp" ]
+    | Call label -> [ "jal " ^ label ]
+    | StoreRet argscnt ->
+      [ "pop $t1"; sprintf "sw $t1, %i($fp)" ((argscnt * 4) + 4) ]
+    | Ret argscnt ->
+      [ sprintf "addi $sp, $fp, %i" ((argscnt * 4) + 4)
+      ; "lw $ra -8($fp)"
+      ; "lw $fp -4($fp)"
+      ; "jr $ra"
       ]
-    | StoreRet1 -> [ "pop $t1"; "sw $t1, 4($fp)" ]
-    | StoreRet2 -> [ "pop $t1"; "sw $t1, 0($fp)" ]
-    | Ret -> [ "lw $ra, -4($fp)"; "move $sp, $fp"; "lw $fp -8($fp)"; "jr $ra" ]
-    | LoadArg i -> [ sprintf "lw $t1, %i($fp)" (i * 4); "push $t1" ]
     | JumpAddr -> [ "pop $t1"; "jr $t1" ]
     | Beq label -> opbr "beq" label
     | Bne label -> opbr "bne" label
     | Blt label -> opbr "blt" label
     | Ble label -> opbr "ble" label
+    | Blez label -> [ "pop $t1"; "blez $t1, " ^ label ]
+    | Bgtz label -> [ "pop $t1"; "bgtz $t1, " ^ label ]
     | Bgt label -> opbr "bgt" label
     | Bge label -> opbr "bge" label
     | Bltu label -> opbr "bltu" label

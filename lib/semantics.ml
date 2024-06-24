@@ -160,13 +160,18 @@ module Check = struct
       C.Cfun (p, r)
   ;;
 
-  let _match_and_doit the_id the_ty the_env the_rng the_doit =
+  let _match_and_doit
+    the_id
+    the_ty
+    the_env
+    the_rng
+    (the_doit : E.env -> E.env * X.toplevel option)
+    =
     match E.is_local_name_type_eq' the_id the_ty the_env with
     | Some (true, C.Cdecl _) ->
       (* allow old sig *)
       the_doit the_env
-    | Some (true, _) ->
-      raise @@ TypeError ("name redefined", the_rng)
+    | Some (true, _) -> raise @@ TypeError ("name redefined", the_rng)
     | Some (false, ty') ->
       raise
       @@ TypeError
@@ -211,7 +216,7 @@ module Check = struct
       let ty = C.Cfun (paramty, retty) in
       let doit env =
         (* construct const label *)
-        let env, id = E.add_cname' impl_fun_id ty env in
+        let env, id = E.impl_cname' impl_fun_id ty env in
         (* construct param list *)
         let pairs = List.combine impl_fun_param paramty in
         (* construct inner env, add scope barrier *)
