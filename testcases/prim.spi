@@ -1,8 +1,17 @@
+# primitives for list
 car : (list) -> int
 cdr : (list) -> list
 cons : (int, list) -> list
+
+# primitives for memory manipulate
 deref : (int) -> bytes
-substr : (bytes, int, int) -> bytes
-strlen : (bytes) -> int
 new : (int) -> bytes
 del : (bytes) -> unit
+
+# primitives for null terminate bytes
+substr : (bytes, int, int) -> bytes
+strlen : (bytes) -> int
+
+# primitives for print
+prints : (bytes) -> unit
+printi : (int) -> unit

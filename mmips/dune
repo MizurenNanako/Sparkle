@@ -1,0 +1,12 @@
+(ocamllex lex)
+
+; (menhir
+;  (modules parse)
+;  (flags --table))
+
+(ocamlyacc parse)
+
+(library
+ (name mmips)
+ (public_name mmips)
+ (libraries menhirLib))

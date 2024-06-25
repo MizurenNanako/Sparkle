@@ -26,7 +26,8 @@ let run_parse_check () =
   try
     let ast, env = ast |> Semantics.Check.check_translation_unit in
     ast |> List.map Syntactics.AST2.show_toplevel |> List.iter print_endline;
-    env |> Typing.Env.show_env |> print_endline
+    env |> Typing.Env.show_env |> print_endline;
+    Typing.Env.dirty_table |> Typing.Env.show_dirty_table |> print_endline
   with
   | Semantics.Check.TypeError (msg, rng) ->
     Printf.eprintf "TypeError: %s at %s\n" msg (Lexical.Range.show rng)

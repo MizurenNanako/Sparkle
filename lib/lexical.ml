@@ -101,6 +101,7 @@ module Token = struct
     | Txor (* xor *) of pos
     | Tshl (* shl *) of pos
     | Tshr (* shr *) of pos
+    | Tmod (* mod *) of pos
     (* 4 *)
     | Tlshr (* lshr *) of pos
     | Txnor (* xnor *) of pos
@@ -142,8 +143,8 @@ module Token = struct
     | Tto pos
     | Tor pos -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 2 }
     (* 3 *)
-    | Tnil pos | Tand pos | Tnot pos | Txor pos | Tshl pos | Tshr pos ->
-      pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
+    | Tnil pos | Tand pos | Tnot pos | Txor pos | Tshl pos | Tshr pos | Tmod pos
+      -> pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 3 }
     (* 4 *)
     | Tlshr pos | Txnor pos ->
       pos, { pos with Lexing.pos_cnum = pos.pos_cnum + 4 }

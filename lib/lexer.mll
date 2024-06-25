@@ -99,6 +99,7 @@ rule get_token = parse
 | "xor"  { Txor (lb ()).lex_start_p }
 | "shl"  { Tshl (lb ()).lex_start_p }
 | "shr"  { Tshr (lb ()).lex_start_p }
+| "mod"  { Tmod (lb ()).lex_start_p }
 | "lshr" { Tlshr (lb ()).lex_start_p }
 | "xnor" { Txnor (lb ()).lex_start_p }
 

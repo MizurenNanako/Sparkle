@@ -3,4 +3,5 @@
  (name main)
  (libraries lexer parse semantics)
  ; (libraries lexer parser common lexical syntactics semantics)
+ (package sparkle-lang)
  )

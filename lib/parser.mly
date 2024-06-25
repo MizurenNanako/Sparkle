@@ -42,6 +42,7 @@
 %token <pos> Tand "and"
 %token <pos> Tnot "not"
 %token <pos> Txor "xor"
+%token <pos> Tmod "mod"
 %token <pos> Tshl "shl"
 %token <pos> Tshr "shr"
 %token <pos> Tlshr "lshr"
@@ -64,7 +65,7 @@
 // %left "^"
 %left "shl" "shr" "lshr"
 %left "+" "-"
-%left "*" "/"
+%left "*" "/" "mod"
 %right UPOS UNEG "not"
 %left "."
 %nonassoc "[" // call
@@ -173,6 +174,7 @@ primary_expr:
 | a = expr; "-"; b = expr; { {expr_desc = ArithExpr (OpSub, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "*"; b = expr; { {expr_desc = ArithExpr (OpMul, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "/"; b = expr; { {expr_desc = ArithExpr (OpDiv, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
+| a = expr; "mod"; b = expr; { {expr_desc = ArithExpr (OpMod, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "shl"; b = expr; { {expr_desc = ArithExpr (OpShl, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "shr"; b = expr; { {expr_desc = ArithExpr (OpShr, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }
 | a = expr; "lshr"; b = expr; { {expr_desc = ArithExpr (OpLshr, a, b); expr_rng = Range.join a.expr_rng b.expr_rng} }

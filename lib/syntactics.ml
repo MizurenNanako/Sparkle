@@ -61,6 +61,7 @@ module AST = struct
     | OpSub
     | OpMul
     | OpDiv
+    | OpMod
     | OpAnd
     | OpOr
     | OpXor
@@ -95,8 +96,9 @@ module AST2 = struct
 
   type toplevel =
     | ImplFunc of
-        { impl_func_id : id
+        { impl_func_id : id 
         ; impl_func_param : id list
+        (* ; impl_func_pcnt : int *)
         ; impl_func_ptype : C.t list
         ; impl_func_body : expr
         }
@@ -128,7 +130,7 @@ module AST2 = struct
 
   and const =
     | IntConst of int64
-    | StrConst of bytes
+    | StrConst of Typing.Env.id (* only an id *)
     | UnitConst
     | NilConst
 
@@ -137,6 +139,7 @@ module AST2 = struct
     | OpSub
     | OpMul
     | OpDiv
+    | OpMod
     | OpAnd
     | OpOr
     | OpXor
@@ -158,6 +161,7 @@ module AST2 = struct
     | AST.OpSub -> OpSub
     | AST.OpMul -> OpMul
     | AST.OpDiv -> OpDiv
+    | AST.OpMod -> OpShr
     | AST.OpAnd -> OpAnd
     | AST.OpOr -> OpOr
     | AST.OpXor -> OpXor

@@ -12,10 +12,15 @@ module Check = struct
   let rec check_expr (env : E.env) (expr : A.expr) : C.t * X.expr =
     match expr.expr_desc with
     | ArithExpr (op, l, r) ->
-      (* due to design, two side should all be int *)
+      (* due to design, two side should all be int, and return int *)
+      let ty = C.Cint in
+      let env, id = E.add_tmp' ty env in
       let (t1, c1), (t2, c2) = check_expr env l, check_expr env r in
       (match t1, t2 with
-       | C.Cint, C.Cint -> C.Cint, X.ArithExpr (X.arithop_cnv op, c1, c2)
+       | C.Cint, C.Cint ->
+         let cc = X.ArithExpr (X.arithop_cnv op, c1, c2) in
+         let bindcc = X.BindExpr (id, cc, X.VarExpr id) in
+         C.Cint, bindcc
        | C.Cint, _ ->
          raise
          @@ TypeError ("should be int: rhs of " ^ A.show_arithop op, r.expr_rng)
@@ -41,15 +46,29 @@ module Check = struct
          @@ TypeError
               ("should be int: both sides of " ^ A.show_strop op, expr.expr_rng)) *)
     | RelExpr ((A.OpPeq as op), l, r) | RelExpr ((A.OpPneq as op), l, r) ->
-      (* physical addr always comparable *)
+      (* physical addr always comparable when same type *)
+      let ty = C.Cint in
+      let env, id = E.add_tmp' ty env in
       let (t1, c1), (t2, c2) = check_expr env l, check_expr env r in
-      ignore (t1, t2);
-      C.Cint, X.ArithExpr (X.relop_cnv op, c1, c2)
+      if C.eq t1 t2
+      then
+        C.Cint, X.BindExpr (id, X.ArithExpr (X.relop_cnv op, c1, c2), X.VarExpr id)
+      else
+        raise
+        @@ TypeError
+             ( Printf.sprintf
+                 "type %s and %s are not physical comparable"
+                 (C.show t1)
+                 (C.show t2)
+             , expr.expr_rng )
     | RelExpr (op, l, r) ->
       (* due to design, two side should all be int *)
+      let ty = C.Cint in
+      let env, id = E.add_tmp' ty env in
       let (t1, c1), (t2, c2) = check_expr env l, check_expr env r in
       if C.eq t1 t2 && C.eq t1 C.Cint
-      then C.Cint, X.ArithExpr (X.relop_cnv op, c1, c2)
+      then
+        C.Cint, X.BindExpr (id, X.ArithExpr (X.relop_cnv op, c1, c2), X.VarExpr id)
       else
         raise
         @@ TypeError
@@ -65,8 +84,12 @@ module Check = struct
        | C.Cint ->
          (match op with
           | OpPosi -> C.Cint, c
-          | OpNega -> C.Cint, X.NegExpr c
-          | OpNot -> C.Cint, X.NotExpr c)
+          | OpNega ->
+            let _, id = E.add_tmp' C.Cint env in
+            C.Cint, X.BindExpr (id, X.NegExpr c, X.VarExpr id)
+          | OpNot ->
+            let _, id = E.add_tmp' C.Cint env in
+            C.Cint, X.BindExpr (id, X.NotExpr c, X.VarExpr id))
        | _ ->
          raise
          @@ TypeError ("should be int: opand of " ^ A.show_uop op, l.expr_rng))
@@ -75,7 +98,12 @@ module Check = struct
       let paramsty = List.map (check_expr env) p in
       let paramsty, cl = List.map fst paramsty, List.map snd paramsty in
       (match C.applyfun funty paramsty with
-       | Some ty -> ty, X.CallExpr (c1, cl)
+       | Some C.Cunit -> C.Cunit, X.CallExpr (c1, cl)
+       | Some ty ->
+         let cc = X.CallExpr (c1, cl) in
+         let _, id = E.add_tmp' ty env in
+         let bindcc = X.BindExpr (id, cc, X.VarExpr id) in
+         ty, bindcc
        | None ->
          raise
          @@ TypeError
@@ -87,12 +115,24 @@ module Check = struct
     | CondExpr (brlst, el) -> check_cond_expr env brlst el
     | ListExpr l ->
       (* type erased, still check is valid *)
-      let cl = List.map (fun i -> i |> check_expr env |> snd) l in
-      ( C.Clist
-      , List.fold_right
-          (fun e acc -> X.PrimExpr ("cons", [ e; acc ]))
-          cl
-          (X.ConstExpr X.NilConst) )
+      (* let cl = List.map (fun i -> i |> check_expr env |> snd) l in *)
+      (* let ty = C.Clist in *)
+      let folded =
+        List.fold_right
+          (fun e acc ->
+            { A.expr_desc =
+                A.CallExpr
+                  ( { A.expr_desc = A.VarExpr "cons"; A.expr_rng = e.A.expr_rng }
+                  , [ e; acc ] )
+            ; A.expr_rng = Lexing.dummy_pos, Lexing.dummy_pos
+            })
+          l
+          A.
+            { expr_desc = NilConst
+            ; expr_rng = Lexing.dummy_pos, Lexing.dummy_pos
+            }
+      in
+      check_expr env folded
     (* | AssignExpr _ -> raise NotImplanted *)
     | CompoundExpr (l, r) ->
       (match check_expr env l, check_expr env r with
@@ -104,7 +144,10 @@ module Check = struct
        | Some (ty, id) -> ty, X.VarExpr id
        | None -> raise @@ TypeError ("Unknown Name: " ^ name, expr.expr_rng))
     | IntConst a -> C.Cint, X.ConstExpr (X.IntConst a)
-    | StrConst a -> C.Cbytes, X.ConstExpr (X.StrConst (Bytes.of_string a))
+    | StrConst a ->
+      let _, id = E.add_cname' a C.Cbytes env in
+      E._dirty_str id (Bytes.of_string a);
+      C.Cbytes, X.ConstExpr (X.StrConst id)
     | UnitConst -> C.Cunit, X.ConstExpr X.UnitConst
     | NilConst -> C.Clist, X.ConstExpr X.NilConst
 
@@ -167,10 +210,16 @@ module Check = struct
     the_rng
     (the_doit : E.env -> E.env * X.toplevel option)
     =
+    let hook () =
+      let old_nextid = E._get_dirty_state () |> fst in
+      let tmp = the_doit the_env in
+      E._set_dirty_state (Some old_nextid, None);
+      tmp
+    in
     match E.is_local_name_type_eq' the_id the_ty the_env with
     | Some (true, C.Cdecl _) ->
       (* allow old sig *)
-      the_doit the_env
+      hook ()
     | Some (true, _) -> raise @@ TypeError ("name redefined", the_rng)
     | Some (false, ty') ->
       raise
@@ -180,7 +229,7 @@ module Check = struct
                (C.show ty')
                (C.show the_ty)
            , the_rng )
-    | _ -> the_doit the_env
+    | _ -> hook ()
   ;;
 
   let check_toplevel (env : E.env) (top : A.toplevel) : E.env * X.toplevel option =
@@ -235,7 +284,8 @@ module Check = struct
           ( env
           , Some
               (X.ImplFunc
-                 { impl_func_param = arg_ids
+                 { (* impl_func_pcnt = arg_ids *)
+                   impl_func_param = arg_ids
                  ; impl_func_ptype = paramty
                  ; impl_func_body = cc
                  ; impl_func_id = id

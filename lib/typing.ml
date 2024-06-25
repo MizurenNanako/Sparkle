@@ -58,6 +58,48 @@ module Env = struct
     | IdArg of int
   [@@deriving show { with_path = false }]
 
+  (* --- some dirty workaround here!!! --- *)
+  type dirty_state =
+    { mutable dirty_next_id : int
+    ; mutable dirty_next_cid : int
+    }
+
+  type dirty_table = { mutable dirty_constant_table : (id * bytes) list }
+  [@@deriving show { with_path = false }]
+
+  let dirty_table = { dirty_constant_table = [] }
+  let dirty_state = { dirty_next_id = -1; dirty_next_cid = -1 }
+
+  let _nextid () =
+    dirty_state.dirty_next_id <- succ dirty_state.dirty_next_id;
+    dirty_state.dirty_next_id
+  ;;
+
+  let _nextcid () =
+    dirty_state.dirty_next_cid <- succ dirty_state.dirty_next_cid;
+    dirty_state.dirty_next_cid
+  ;;
+
+  let _dirty_str id str =
+    dirty_table.dirty_constant_table
+    <- (id, str) :: dirty_table.dirty_constant_table
+  ;;
+
+  let _resetid () = dirty_state.dirty_next_id <- -1
+  let _resetcid () = dirty_state.dirty_next_cid <- -1
+  let _get_dirty_state () = dirty_state.dirty_next_id, dirty_state.dirty_next_cid
+
+  let _set_dirty_state (next_id, next_cid) =
+    (match next_id with
+     | Some next_id -> dirty_state.dirty_next_id <- next_id
+     | None -> ());
+    match next_cid with
+    | Some next_cid -> dirty_state.dirty_next_cid <- next_cid
+    | None -> ()
+  ;;
+
+  (* ------------------------------------- *)
+
   type entry =
     | Entry of CType.t * id
     | Barrier
@@ -65,38 +107,55 @@ module Env = struct
 
   type env =
     { env_raw : (string * entry) list
-    ; env_nextid : int
-    ; env_nextcid : int
+    (* ; env_nextid : int *)
+    (* ; env_nextcid : int *)
     }
   [@@deriving show { with_path = false }]
 
-  let empty = { env_raw = []; env_nextid = 0; env_nextcid = 0 }
+  let empty = { env_raw = [] }
+  (* let empty = { env_raw = []; env_nextid = 0; env_nextcid = 0 } *)
 
   let add_name' name ty env =
-    let id = env.env_nextid in
-    ( { env with
-        env_raw = (name, Entry (ty, IdTmp env.env_nextid)) :: env.env_raw
-      ; env_nextid = succ env.env_nextid
+    (* let id = env.env_nextid in *)
+    let id = _nextid () in
+    ( { env_raw =
+          (name, Entry (ty, IdTmp id)) :: env.env_raw
+          (* ; env_nextid = succ env.env_nextid *)
       }
     , IdTmp id )
   ;;
 
   let add_name name ty env = add_name' name ty env |> fst
 
+  let add_tmp' ty env =
+    (* let id = env.env_nextid in *)
+    let id = _nextid () in
+    ( { (* env with *)
+        env_raw =
+          (string_of_int id, Entry (ty, IdTmp id)) :: env.env_raw
+          (* ; env_nextid = succ env.env_nextid *)
+      }
+    , IdTmp id )
+  ;;
+
+  let add_tmp ty env = add_tmp' ty env |> fst
+
   let add_cname' name ty env =
-    let id = env.env_nextcid in
-    ( { env with
-        env_raw = (name, Entry (ty, IdCst env.env_nextcid)) :: env.env_raw
-      ; env_nextcid = succ env.env_nextcid
+    (* let id = env.env_nextcid in *)
+    let id = _nextcid () in
+    ( { (* env with *)
+        env_raw =
+          (name, Entry (ty, IdCst id)) :: env.env_raw
+          (* ; env_nextcid = succ env.env_nextcid *)
       }
     , IdCst id )
   ;;
 
   let add_cname name ty env = add_cname' name ty env |> fst
-  let add_scope name env = { env with env_raw = (name, Barrier) :: env.env_raw }
+  let add_scope name env = { env_raw = (name, Barrier) :: env.env_raw }
 
-  let add_args (pairs : (string * CType.t) list) (env : env) : env * id list =
-    let argnext = ref env.env_nextid in
+  let add_args (pairs : (string * CType.t) list) (env : env) =
+    let argnext = ref 0 in
     let ids = ref [] in
     let pairs =
       List.map
@@ -107,8 +166,10 @@ module Env = struct
           s, Entry (t, IdArg the_arg))
         pairs
     in
-    { env with env_raw = List.append pairs env.env_raw }, !ids
+    { env_raw = List.append pairs env.env_raw }, !ids
   ;;
+
+  (* { env with env_raw = List.append pairs env.env_raw }, !argnext *)
 
   let get_name (name : string) (env : env) =
     let rec r tl =
@@ -161,14 +222,15 @@ module Env = struct
   let impl_cname' name ty env =
     match get_local_name' name env with
     | None ->
-      let id = env.env_nextcid in
-      ( { env with
-          env_raw = (name, Entry (ty, IdCst env.env_nextcid)) :: env.env_raw
-        ; env_nextcid = succ env.env_nextcid
+      (* let id = env.env_nextcid in *)
+      let id = _nextcid () in
+      ( { (* env with *)
+          env_raw =
+            (name, Entry (ty, IdCst id)) :: env.env_raw
+            (* ; env_nextcid = succ env.env_nextcid *)
         }
       , IdCst id )
-    | Some (_, id) ->
-      { env with env_raw = (name, Entry (ty, id)) :: env.env_raw }, id
+    | Some (_, id) -> { env_raw = (name, Entry (ty, id)) :: env.env_raw }, id
   ;;
 
   let is_local_name_type_eq (name : string) (ty : CType.t) (env : env) =
@@ -203,7 +265,7 @@ module Env = struct
   ;;
 
   (* get recent one sig of name, destory it, set next to its id *)
-  let hang_up (name : string) (env : env) : env * int =
+  (* let hang_up (name : string) (env : env) : env * int =
     let rec r acc tl =
       match tl with
       | [] -> raise @@ Failure "hang_up"
@@ -215,5 +277,5 @@ module Env = struct
     { env with env_raw = fixed; env_nextcid = id }, env.env_nextcid
   ;;
 
-  let hang_down (cid : int) (env : env) : env = { env with env_nextcid = cid }
+  let hang_down (cid : int) (env : env) : env = { env with env_nextcid = cid } *)
 end
