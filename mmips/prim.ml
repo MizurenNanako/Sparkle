@@ -19,7 +19,12 @@ let print =
   \   syscall\n\
   \   add $v0, $t0, $zero    # restore $v0 \n\
   \   jr $ra\n\n\
-   readInt: # unit->int\n\n\
+   readInt: # unit->int\n\
+  \   add $t0, $a0, $zero\n\
+  \   li $v0, 5              # read_int\n\
+  \   syscall\n\
+  \   add $a0, $t0, $zero\n\
+  \   jr $ra\n\n\n\
    printSpace: # unit->unit\n\
   \   add $t0, $v0, $zero\n\
   \   la $a0, _spaceString      # address of string to print\n\

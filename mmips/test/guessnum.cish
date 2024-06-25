@@ -1,0 +1,18 @@
+main() {
+  a = 12345;
+  b = readInt();
+  while (b != a)
+  {
+    if (b > a) {
+      printInt(111);
+    }
+    else {
+      printInt(222);
+    }
+    printNewline();
+    b = readInt();
+  }
+  printInt(333);
+  printNewline();
+  return 0;
+}

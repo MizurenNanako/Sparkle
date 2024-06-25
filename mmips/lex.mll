@@ -1,19 +1,12 @@
 (* header section *)
 {
-open Parse
-open Lexing
-
-let incr_lineno lexbuf =
-  let pos = lexbuf.lex_curr_p in
-  lexbuf.lex_curr_p <- { pos with
-    pos_lnum = pos.pos_lnum + 1;
-    pos_bol = pos.pos_cnum;
-  }
+  open Parse
+  open Lexing
 }
 
 (* definition section *)
-let cr='\013'
-let nl='\010'
+let cr='\r'
+let nl='\n'
 let eol=(cr nl|nl|cr)
 let ws=('\012'|'\t'|' ')*
 let digit=['0'-'9'] 
@@ -23,7 +16,7 @@ let id = ['A'-'Z''a'-'z''_']['a'-'z''A'-'Z''0'-'9''_']*
 (* rules section *)
 
 rule lexer = parse
-| eol { incr_lineno lexbuf; lexer lexbuf } 
+| eol { Lexing.new_line lexbuf; lexer lexbuf } 
 | ws+ { lexer lexbuf }
 | ';' { SEMI }
 | '{' { LBRACE }
@@ -55,8 +48,19 @@ rule lexer = parse
 | digit+ { INT(int_of_string(Lexing.lexeme lexbuf)) } 
 | "/*" { comment lexbuf } (* comment start *)
 | eof { EOF }
+| _ as c 
+{
+    raise @@ 
+      Failure(
+        Printf.sprintf "unsupport charactor at \"%s\" line %i: %c" 
+          lexbuf.lex_curr_p.pos_fname
+          lexbuf.lex_curr_p.pos_lnum
+          c
+      ) 
+}
+
 and comment = parse 
-| eol { incr_lineno lexbuf; comment lexbuf }
+| eol { Lexing.new_line lexbuf; comment lexbuf }
 | "*/" { lexer lexbuf } (* comment end *)
 | _ { comment lexbuf }
 

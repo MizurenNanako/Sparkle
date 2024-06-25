@@ -33,9 +33,20 @@ let run_parse_check () =
     Printf.eprintf "TypeError: %s at %s\n" msg (Lexical.Range.show rng)
 ;;
 
+let run_compile_to_cish () =
+  let ast = Parse.Driver.run_file Sys.argv.(1) in
+  try
+    let ast, _env = ast |> Semantics.Check.check_translation_unit in
+    ast |> List.map Ir_cnv.Cish_cnv.transpile_toplevel |> List.iter print_endline
+  with
+  | Semantics.Check.TypeError (msg, rng) ->
+    Printf.eprintf "TypeError: %s at %s\n" msg (Lexical.Range.show rng)
+;;
+
 let () =
-  ignore (run_lexer_only, run_parse_only, run_parse_check);
+  ignore (run_lexer_only, run_parse_only, run_parse_check, run_compile_to_cish);
   (* run_lexer_only (); *)
   (* run_parse_only () *)
-  run_parse_check ()
+  (* run_parse_check () *)
+  run_compile_to_cish ()
 ;;

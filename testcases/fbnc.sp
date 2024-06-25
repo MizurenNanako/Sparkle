@@ -1,5 +1,3 @@
-gvar := 20
-
 fbnc : [n: int] -> int
     n' :=
         ? n = 0 -> 1
@@ -12,5 +10,5 @@ fbnc : [n: int] -> int
 
 
 main : [] -> int
-    ret := fbnc[gvar]
+    ret := fbnc[20]
     => ret

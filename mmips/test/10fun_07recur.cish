@@ -6,5 +6,7 @@ f(x) {
   }
 }
 main() {
-  return f(10);
+  let n = readInt();
+  printInt(f(n));
+  return 0;
 }

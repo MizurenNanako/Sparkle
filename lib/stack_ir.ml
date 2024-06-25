@@ -1,219 +1,178 @@
 module StkIR = struct
   exception NotImplanted
 
-  type instruction =
-    (* basic push pop *)
-    | Push
-    | Pop
-    | Dup (* duplicate top *)
-    (* pop, pop, op, push *)
-    | Add
-    | Addu
-    | Sub
-    | Subu
-    | Mul
-    | Mulu
-    | Div
-    | Divu
-    | Rem
-    | Remu
-    | And
-    | Xor
-    | Or
-    | Sllv
-    | Srlv
-    | Srav
-    (* pop, op, push *)
-    | Not
-    | Sll of int
-    | Srl of int
-    | Sra of int
-    (* push(data) *)
-    | LoadImme of int
-    | LoadLabel of string
-    | LoadConst of string (* const word from .data *)
-    (* pop addr, load addr, push *)
-    | LoadAddr of int (* pop addr, offset *)
-    (* pop addr, pop data, store data at addr *)
-    | StoreAddr of int (* pop addr, pop 1 word out and store, offset *)
-    (* jump *)
-    | JumpLabel of string (* jump to label *)
-    (* call to label, assuming all parameters
-       pushed into stack in definition order,
-       for their id's order are already reversed. *)
-    | PreCall (* this is to allocate return value (4 bytes) *)
-    (* | PreCall2 this is to allocate return value (8 bytes) *)
-    (* after pre, push args, then call *)
-    (* | PreArg *)
-    | Call of string
-    (* tail recursive, copy args, rewind stack. *)
-    (* | TailRec *)
-    (* return *)
-    | Ret of int (* need argscnt, $sp = ret pos *)
-    | JumpAddr (* pop addr, jump to addr *)
-    (* branch to label *)
-    | Beq of string
-    | Bne of string
-    | Blt of string
-    | Ble of string
-    | Bgt of string
-    | Bge of string
-    | Bltu of string
-    | Bleu of string
-    | Bgtu of string
-    | Bgeu of string
-    (* acturally useable *)
-    | Blez of string
-    | Bgtz of string
-    (* syscall *)
-    | SysCall of syscall_mode
-    (* load func args *)
-    | LoadArg of int
-    | LoadTmp of int
-    (* store return value *)
-    | StoreRet of int
-  (* need offset *)
-  (* | StoreRet2 *)
+  (* note all instructions are for system word *)
+  (* int32 on mips32 *)
 
-  and syscall_mode =
-    | SysPrintInt (* data *)
-    (* | SysPrintFloat *)
-    (* | SysPrintDouble *)
-    | SysPrintString (* addr *)
-    | SysReadInt
-    (* | SysReadFloat *)
-    (* | SysReadDouble *)
-    | SysReadString (* addr, length *)
-    | SysAlloc (* size *)
-    | SysExit
-    | SysPrintChar (* char *)
-    | SysReadChar
+  type word = int32
 
-  type manager =
-    { manager_next_label_id : int
-    ; manager_next_data_id : int
+  let size_of_word = 4
+
+  (* !!! ALL ADDR is not physical address, ther are phy_addr/sizeof(word) !!! *)
+
+  (** the stkrec_addr is calculated with relative address,
+      for (addr=n, size=1), it means offset($fp),
+      where offset = (size_of_word * size)
+      note that args are outside of frame!!! *)
+  type stack_record =
+    { stkrec_addr : int (* after a push, then set, so starts at 1 *)
+    ; stkrec_size : int
     }
 
-  (*
-     frame:
-     fp+n | return value
-     ...
-     fp+8 | arg1
-     fp+4 | arg0
-     fp   | --------frame---------
-     fp-4 | old fp
-     fp-8 | old ra
-     fp-12| tmp1
+  (* note that for a new frame, stack_addr is 0, but the first val will always be 1 *)
+
+  let get_tmp_offset (stkrec : stack_record) = -stkrec.stkrec_addr * size_of_word
+
+  type segdata_record =
+    { segd_symbol : string
+    ; segd_raw : bytes
+    }
+
+  (* all can be access with [List.assoc] *)
+  type lookup_table = (string * stack_record) list ref
+  type data_table = (string * segdata_record) list ref
+
+  (* some instruction will cause stack growth or shrink,
+     which will recorded in [activity_record].
+     local var have names and addr in [lookup_table]
+     arguments will be in [args_table] of a [frame]
   *)
 
-  type frame =
-    { frame_id : int
-    ; frame_args_cnt : int (* return value is at fp+(args_cnt * 4)+4 *)
-    ; frame_tmp_cnt : int (* allocate 4*tmp_cnt *)
-    ; frame_content : instruction list
+  (*
+     consider [name a + name b]
+     1. LOAD_NAME b
+     2. LOAD_NAME a
+     3. OP2 ADD
+  *)
+
+  (*
+     consider [name a <- expr e]
+     1. compute e
+     / now tos is its value
+     2. STORE_NAME a
+  *)
+
+  (*
+     consider [let a = b in c]
+     / don't alloc for a, just store (a, addr) to lookup table
+     1. BIND a
+     2. do the work of b
+     / now the top of stack is [value_from_b; ...], acturally a
+     3. do the work of c
+     4. POP
+  *)
+
+  (*
+     consider [if p then a else b]
+     1. calc p
+     / now tos is p
+     2. JZ label_else
+     / if tos = 0, jump to label_else
+     3. do the work of a
+     4. J label_end
+     5. LABEL label_else
+     6. do the work of b
+     7. LABEL label_end
+  *)
+
+  (*
+     consider [call f a1, a2, ..., an]
+     / alloc for return val
+     1. ALLOC_RET frame_retval_size
+     / eval an, ..., a2, a1
+     2. do the work for an ... a1
+     3. CALL f
+     4. POPN sum(frame_params_sizes)
+
+     so in this model, functions do not clean by itself.
+  *)
+
+  (*
+     consider a function body with frame_record
+     / store frame pointer
+     1. FRAME_ENTER
+     2. do the job
+     3. FRAME_EXIT
+  *)
+
+  type frame_record =
+    { frame_params_sizes : int list (** size of arg1, arg2, ..., argn *)
+    ; frame_retval_size : int (** size of return value *)
+    ; frame_code : instruction list
     }
 
-  let syscall_num = function
-    | SysPrintInt -> "1"
-    (* | SysPrintFloat -> "2" *)
-    (* | SysPrintDouble -> "3" *)
-    | SysPrintString -> "4"
-    | SysReadInt -> "5"
-    (* | SysReadFloat -> "6" *)
-    (* | SysReadDouble -> "7" *)
-    | SysReadString -> "8"
-    | SysAlloc -> "9"
-    | SysExit -> "10"
-    | SysPrintChar -> "11"
-    | SysReadChar -> "12"
-  ;;
+  and frame_table = (string * frame_record) list ref
 
-  let op1i name imm =
-    [ "pop $t1"; Printf.sprintf "%s $t1, $t1, %i" name imm; "push $1" ]
-  ;;
+  and instruction =
+    | NOP (* do nothing *)
+    | IM of word (* pushin an int value *)
+    | POP (* remove top of stack *)
+    | POPN of int (* pop n times *)
+    | OP2 of op2 (* a<-pop, b<-pop, push<-(a op b) *)
+    | OP1 of op1
+    | BIND of string * int
+      (* store name to lookup table without alloc,
+         this uses unalloced space, but will be filled
+         - after some exec. *)
+    | ALLOC of string * int
+    (* alloc for a name, the name and addr is then stored in [local_sym_table] *)
+    | STORE_NAME of
+        string (* store tos to the name, get size info from lookup table *)
+    | LOAD_NAME of string (* load name to tos *)
+    | LOAD_CONST of string (* load from .data to tos *)
+    | ALLOC_RET of int (* alloc n words for return value *)
+    | STORE_RET
+      (* store tos, tos+1, ..., to return value, respecting [frame_retval_size] *)
+    | LABEL of string (* mark a label, for later jumping *)
+    | J of string (* jump to label *)
+    | JZ of string (* if tos = 0, jump to label *)
+    | RET (* just return with nothing *)
+    | CALL of string (* call to function with label from [frame_table] *)
+    | LOAD_ARG of
+        int (* load the nth arg (start from 0), respecting [frame_params_sizes] *)
+    | FRAME_ENTER (* push $ra, push $fp, $fp = $sp *)
+    | FRAME_EXIT (* pop $fp, pop $ra *)
 
-  let op1 name = [ "pop $t1"; name ^ " $t1, $t1"; "push $1" ]
-  let op2 name = [ "pop $t1"; "pop $t2"; name ^ " $t1, $t1, $t2"; "push $1" ]
-  let opbr name label = [ "pop $t1"; "pop $t2"; name ^ " $t1, $t2, " ^ label ]
-  let syscall mode = [ "li $v0, " ^ syscall_num mode; "syscall" ]
+  and op2 =
+    (* arith *)
+    | ADD
+    | SUB
+    | MUL
+    | DIV
+    | MOD
+    (* bits *)
+    | SHL
+    | SHR
+    | LSHR
+    (* logic *)
+    | AND
+    | OR
+    | XOR
+    | XNOR
+    | NAND
+    | NOR
 
-  let ins_to_asm =
-    let open Printf in
-    function
-    | Push -> [ "push $t1" ]
-    | Pop -> [ "pop $t1" ]
-    | Dup -> [ "lw $t1, 0($sp)"; "pop $1" ]
-    | Add -> op2 "add"
-    | Addu -> op2 "addu"
-    | Sub -> op2 "sub"
-    | Subu -> op2 "subu"
-    | Mul -> op2 "mul"
-    | Mulu -> op2 "mulu"
-    | Div -> op2 "div"
-    | Divu -> op2 "divu"
-    | Rem -> op2 "rem"
-    | Remu -> op2 "remu"
-    | Not -> op2 "not"
-    | And -> op2 "and"
-    | Xor -> op2 "xor"
-    | Or -> op1 "or"
-    | Sllv -> op2 "sllv"
-    | Srlv -> op2 "srlv"
-    | Srav -> op2 "srav"
-    | Sll imm -> op1i "sll" imm
-    | Srl imm -> op1i "srl" imm
-    | Sra imm -> op1i "sra" imm
-    | LoadImme imm -> [ "li $t1, " ^ string_of_int imm; "push $t1" ]
-    | LoadLabel lab -> [ "la $t1, " ^ lab; "push $t1" ]
-    | LoadConst name -> [ "lw $t1, " ^ name; "push $t1" ]
-    | LoadAddr offset -> [ "pop $t2"; sprintf "lw $1, %i($2)" offset; "push $t1" ]
-    | LoadArg i -> [ sprintf "lw $t1, %i($fp)" ((i * 4) + 4); "push $t1" ]
-    | LoadTmp i -> [ sprintf "lw $t1, %i($fp)" ((-i * 4) - 8); "push $t1" ]
-    | StoreAddr offset -> [ "pop $t2"; "pop $t1"; sprintf "sw $t1 %i($2)" offset ]
-    | JumpLabel label -> [ "j " ^ label ]
-    | PreCall -> [ "addi $sp, $sp, -4"; "move $a3 $sp" ]
-    | Call label -> [ "jal " ^ label ]
-    | StoreRet argscnt ->
-      [ "pop $t1"; sprintf "sw $t1, %i($fp)" ((argscnt * 4) + 4) ]
-    | Ret argscnt ->
-      [ sprintf "addi $sp, $fp, %i" ((argscnt * 4) + 4)
-      ; "lw $ra -8($fp)"
-      ; "lw $fp -4($fp)"
-      ; "jr $ra"
-      ]
-    | JumpAddr -> [ "pop $t1"; "jr $t1" ]
-    | Beq label -> opbr "beq" label
-    | Bne label -> opbr "bne" label
-    | Blt label -> opbr "blt" label
-    | Ble label -> opbr "ble" label
-    | Blez label -> [ "pop $t1"; "blez $t1, " ^ label ]
-    | Bgtz label -> [ "pop $t1"; "bgtz $t1, " ^ label ]
-    | Bgt label -> opbr "bgt" label
-    | Bge label -> opbr "bge" label
-    | Bltu label -> opbr "bltu" label
-    | Bleu label -> opbr "bleu" label
-    | Bgtu label -> opbr "bgtu" label
-    | Bgeu label -> opbr "bgeu" label
-    | SysCall (SysPrintInt as m) -> [ "pop $a0" ] @ syscall m
-    | SysCall (SysPrintString as m) -> [ "pop $a0" ] @ syscall m
-    | SysCall (SysReadInt as m) -> syscall m @ [ "push $v0" ]
-    | SysCall (SysReadString as m) -> [ "pop $a0"; "pop $a1" ] @ syscall m
-    | SysCall (SysAlloc as m) -> [ "pop $a0" ] @ syscall m @ [ "push $v0" ]
-    | SysCall (SysExit as m) -> syscall m
-    | SysCall (SysPrintChar as m) -> [ "pop $a0" ] @ syscall m
-    | SysCall (SysReadChar as m) -> syscall m @ [ "push $v0" ]
-  ;;
+  and op1 =
+    (* arith *)
+    | NEG
+    (* bits *)
+    | COMPL (* bitwise invert *)
+    | SHLI of int (* shift at constant *)
+    | SHRI of int (* shift at constant *)
+    | LSHRI of int (* shift at constant *)
+    (* logic *)
+    | NOT
 
-  (* | _ -> raise NotImplanted *)
-
-  (* remove some stupid part *)
-  let deduplicate (asm : string list) =
-    let rec r acc tl =
-      match tl with
-      | [] -> List.rev acc
-      | "push $t1" :: "pop $t1" :: tl -> r acc tl
-      | hd :: tl -> r (hd :: acc) tl
+  (** helper function for LOAD_ARG *)
+  let get_arg_offset (nth : int) (framerec : frame_record) =
+    let rec r acc nth l =
+      if nth = 0
+      then acc
+      else (
+        match l with
+        | hd :: tl -> r (acc + hd) (nth - 1) tl
+        | _ -> assert false)
     in
-    r [] asm
+    r 0 nth framerec.frame_params_sizes
   ;;
 end

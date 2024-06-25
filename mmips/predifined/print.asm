@@ -21,6 +21,12 @@ printInt: # int reg->unit
    jr $ra
 
 readInt: # unit->int
+   add $t0, $a0, $zero
+   li $v0, 5              # read_int
+   syscall
+   add $a0, $t0, $zero
+   jr $ra
+
 
 printSpace: # unit->unit
    add $t0, $v0, $zero

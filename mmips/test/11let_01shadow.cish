@@ -1,7 +1,9 @@
 main() {
   let x = 3; {
     let x = 4; {
-      return x;
+      printInt(x);
     }
+    printInt(x);
   }
+  return 0;
 }

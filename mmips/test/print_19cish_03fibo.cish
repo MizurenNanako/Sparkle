@@ -5,6 +5,6 @@ fibo(n) {
     return fibo(n - 1) + fibo(n - 2);
 }
 main() {
-  printInt(fibo(11));
+  printInt(fibo(readInt()));
   return 0;
 }

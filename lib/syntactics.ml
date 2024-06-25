@@ -161,7 +161,7 @@ module AST2 = struct
     | AST.OpSub -> OpSub
     | AST.OpMul -> OpMul
     | AST.OpDiv -> OpDiv
-    | AST.OpMod -> OpShr
+    | AST.OpMod -> OpMod
     | AST.OpAnd -> OpAnd
     | AST.OpOr -> OpOr
     | AST.OpXor -> OpXor
