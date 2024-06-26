@@ -2,7 +2,7 @@
 
 (using menhir 3.0)
 
-(name mlisp)
+(name sparkle-lang)
 
 (source
  (github mizurennanako/spml))
@@ -13,11 +13,11 @@
 
 (documentation https://url/to/documentation)
 
-(package
- (name mmips)
- (synopsis "mmips")
- (description "generate mips instruction from c-ish input")
- (depends ocaml dune))
+; (package
+;  (name mmips)
+;  (synopsis "mmips")
+;  (description "generate mips instruction from c-ish input")
+;  (depends ocaml dune))
 
 (package
  (name sparkle-lang)

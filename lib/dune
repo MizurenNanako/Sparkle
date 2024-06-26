@@ -1,6 +1,9 @@
 (library
  (name stack_ir)
- (modules stack_ir))
+ (modules stack_ir)
+ (preprocess
+  (pps ppx_show))
+ (libraries ppx_show.runtime))
 
 (library
  (name llvm_ir)

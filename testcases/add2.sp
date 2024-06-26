@@ -1,3 +1,7 @@
-main: [] -> int
-    a:=1+1
-    =>a
+printi: (int) -> unit
+
+f: [n: int] -> unit
+    printi[n]
+
+main: [] -> unit
+    f[12]

@@ -58,6 +58,13 @@ module Env = struct
     | IdArg of int
   [@@deriving show { with_path = false }]
 
+  let strid (id : id) : string =
+    match id with
+    | IdTmp i -> "tmp" ^ string_of_int i
+    | IdCst i -> "cst" ^ string_of_int i
+    | IdArg i -> "arg" ^ string_of_int i
+  ;;
+
   (* --- some dirty workaround here!!! --- *)
   type dirty_state =
     { mutable dirty_next_id : int
@@ -118,7 +125,8 @@ module Env = struct
   let add_name' name ty env =
     (* let id = env.env_nextid in *)
     let id = _nextid () in
-    ( { env_raw =
+    ( { (* env with *)
+        env_raw =
           (name, Entry (ty, IdTmp id)) :: env.env_raw
           (* ; env_nextid = succ env.env_nextid *)
       }
@@ -152,7 +160,11 @@ module Env = struct
   ;;
 
   let add_cname name ty env = add_cname' name ty env |> fst
-  let add_scope name env = { env_raw = (name, Barrier) :: env.env_raw }
+
+  let add_scope name env =
+    { (* env with *)
+      env_raw = (name, Barrier) :: env.env_raw }
+  ;;
 
   let add_args (pairs : (string * CType.t) list) (env : env) =
     let argnext = ref 0 in
@@ -166,7 +178,8 @@ module Env = struct
           s, Entry (t, IdArg the_arg))
         pairs
     in
-    { env_raw = List.append pairs env.env_raw }, !ids
+    { (* env with *)
+      env_raw = List.append pairs env.env_raw }, !ids
   ;;
 
   (* { env with env_raw = List.append pairs env.env_raw }, !argnext *)
@@ -230,7 +243,9 @@ module Env = struct
             (* ; env_nextcid = succ env.env_nextcid *)
         }
       , IdCst id )
-    | Some (_, id) -> { env_raw = (name, Entry (ty, id)) :: env.env_raw }, id
+    | Some (_, id) ->
+      { (* env with *)
+        env_raw = (name, Entry (ty, id)) :: env.env_raw }, id
   ;;
 
   let is_local_name_type_eq (name : string) (ty : CType.t) (env : env) =
@@ -278,4 +293,22 @@ module Env = struct
   ;;
 
   let hang_down (cid : int) (env : env) : env = { env with env_nextcid = cid } *)
+
+  module CtoR = struct
+    include Map.Make (String)
+
+    (* ocaml type override trick *)
+    type t' = string t
+    type t = t'
+  end
+
+  (* to get a map of cid -> original name *)
+  let get_cid_name_rel (env : env) : CtoR.t =
+    env.env_raw
+    |> List.filter_map (fun (str, (ent : entry)) ->
+      match ent with
+      | Entry (_ty, id) -> Some (strid id, str)
+      | Barrier -> None)
+    |> CtoR.of_list
+  ;;
 end

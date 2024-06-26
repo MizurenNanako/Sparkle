@@ -9,4 +9,6 @@
  (name testmips)
  (public_name testmmips)
  (libraries mmips)
- (package mmips))
+ ; (package sparkle-lang)
+ (package sparkle-lang)
+ )

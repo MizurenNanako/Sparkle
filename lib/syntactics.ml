@@ -100,11 +100,12 @@ module AST2 = struct
         ; impl_func_param : id list
         (* ; impl_func_pcnt : int *)
         ; impl_func_ptype : C.t list
+        ; impl_func_rtype : C.t
         ; impl_func_body : expr
         }
     | ImplData of
         { impl_data_id : id
-        ; impl_data_value : expr
+        ; impl_data_value : const
         ; impl_data_type : C.t
         }
   [@@deriving show { with_path = false }]
@@ -117,7 +118,7 @@ module AST2 = struct
     | NegExpr of expr
     (* call *)
     | CallExpr of expr * expr list
-    | PrimExpr of string * expr list
+    (* | PrimExpr of string * expr list *)
     (* branch *)
     | IfElseExpr of expr * expr * expr
     (* atom *)
@@ -130,7 +131,7 @@ module AST2 = struct
 
   and const =
     | IntConst of int64
-    | StrConst of Typing.Env.id (* only an id *)
+    | StrConst of bytes (* Full bytes for later optimize *)
     | UnitConst
     | NilConst
 

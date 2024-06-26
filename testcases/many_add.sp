@@ -12,6 +12,9 @@ add_if_even: [acc: int, n: int] -> int
         -> acc
     => acc
 
+n := 5
+
 main: [] -> int
-    prints["hello world"];
+    #printi[n];
+    #prints["\nhello world\n"];
     0

@@ -8,5 +8,4 @@
 
 (library
  (name mmips)
- (public_name mmips)
  (libraries menhirLib))

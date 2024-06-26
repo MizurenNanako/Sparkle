@@ -13,14 +13,13 @@ module Check = struct
     match expr.expr_desc with
     | ArithExpr (op, l, r) ->
       (* due to design, two side should all be int, and return int *)
-      let ty = C.Cint in
-      let env, id = E.add_tmp' ty env in
+      (* let env, id = E.add_tmp' C.Cint env in *)
       let (t1, c1), (t2, c2) = check_expr env l, check_expr env r in
       (match t1, t2 with
        | C.Cint, C.Cint ->
          let cc = X.ArithExpr (X.arithop_cnv op, c1, c2) in
-         let bindcc = X.BindExpr (id, cc, X.VarExpr id) in
-         C.Cint, bindcc
+         (* let cc = X.BindExpr (id, cc, X.VarExpr id) in *)
+         C.Cint, cc
        | C.Cint, _ ->
          raise
          @@ TypeError ("should be int: rhs of " ^ A.show_arithop op, r.expr_rng)
@@ -47,12 +46,13 @@ module Check = struct
               ("should be int: both sides of " ^ A.show_strop op, expr.expr_rng)) *)
     | RelExpr ((A.OpPeq as op), l, r) | RelExpr ((A.OpPneq as op), l, r) ->
       (* physical addr always comparable when same type *)
-      let ty = C.Cint in
-      let env, id = E.add_tmp' ty env in
+      (* let env, id = E.add_tmp' C.Cint env in *)
       let (t1, c1), (t2, c2) = check_expr env l, check_expr env r in
       if C.eq t1 t2
-      then
-        C.Cint, X.BindExpr (id, X.ArithExpr (X.relop_cnv op, c1, c2), X.VarExpr id)
+      then (
+        let cc = X.ArithExpr (X.relop_cnv op, c1, c2) in
+        (* let cc = X.BindExpr (id, cc, X.VarExpr id) in *)
+        C.Cint, cc)
       else
         raise
         @@ TypeError
@@ -101,9 +101,9 @@ module Check = struct
        | Some C.Cunit -> C.Cunit, X.CallExpr (c1, cl)
        | Some ty ->
          let cc = X.CallExpr (c1, cl) in
-         let _, id = E.add_tmp' ty env in
-         let bindcc = X.BindExpr (id, cc, X.VarExpr id) in
-         ty, bindcc
+         (* let _, id = E.add_tmp' ty env in *)
+         (* let cc = X.BindExpr (id, cc, X.VarExpr id) in *)
+         ty, cc
        | None ->
          raise
          @@ TypeError
@@ -145,9 +145,10 @@ module Check = struct
        | None -> raise @@ TypeError ("Unknown Name: " ^ name, expr.expr_rng))
     | IntConst a -> C.Cint, X.ConstExpr (X.IntConst a)
     | StrConst a ->
-      let _, id = E.add_cname' a C.Cbytes env in
-      E._dirty_str id (Bytes.of_string a);
-      C.Cbytes, X.ConstExpr (X.StrConst id)
+      (* let _, id = E.add_cname' a C.Cbytes env in
+         E._dirty_str id (Bytes.of_string a);
+         C.Cbytes, X.ConstExpr (X.StrConst id) *)
+      C.Cbytes, X.ConstExpr (X.StrConst (Bytes.of_string a))
     | UnitConst -> C.Cunit, X.ConstExpr X.UnitConst
     | NilConst -> C.Clist, X.ConstExpr X.NilConst
 
@@ -210,12 +211,13 @@ module Check = struct
     the_rng
     (the_doit : E.env -> E.env * X.toplevel option)
     =
-    let hook () =
-      let old_nextid = E._get_dirty_state () |> fst in
-      let tmp = the_doit the_env in
-      E._set_dirty_state (Some old_nextid, None);
-      tmp
-    in
+    (* let hook () =
+       let old_nextid = E._get_dirty_state () |> fst in
+       let tmp = the_doit the_env in
+       E._set_dirty_state (Some old_nextid, None);
+       tmp
+       in *)
+    let hook () = the_doit the_env in
     match E.is_local_name_type_eq' the_id the_ty the_env with
     | Some (true, C.Cdecl _) ->
       (* allow old sig *)
@@ -244,6 +246,14 @@ module Check = struct
     | A.ImplVar { impl_var_id; impl_var_val } ->
       (* get the type and code *)
       let ty, cc = check_expr env impl_var_val in
+      let cc =
+        match cc with
+        | ConstExpr c -> c
+        | _ ->
+          raise
+          @@ TypeError
+               ("only const value allowd at toplevel", impl_var_val.expr_rng)
+      in
       let doit env =
         (* push it to const entry *)
         let env, id = E.add_cname' impl_var_id ty env in
@@ -288,6 +298,7 @@ module Check = struct
                    impl_func_param = arg_ids
                  ; impl_func_ptype = paramty
                  ; impl_func_body = cc
+                 ; impl_func_rtype = retty
                  ; impl_func_id = id
                  }) )
       in
