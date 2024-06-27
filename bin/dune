@@ -1,14 +1,14 @@
-(executable
- (public_name spml)
- (name main)
- (libraries lexer parse lexical semantics ir_cnv)
- ; (libraries lexer parser common lexical syntactics semantics)
- (package sparkle-lang))
+; (executable
+;  (public_name spml)
+;  (name main)
+;  (libraries lexer parse lexical semantics ir_cnv)
+;  ; (libraries lexer parser common lexical syntactics semantics)
+;  (package sparkle-lang))
 
 (executable
  (name testmips)
  (public_name testmmips)
  (libraries mmips)
  ; (package sparkle-lang)
- (package sparkle-lang)
+ ; (package sparkle-lang)
  )

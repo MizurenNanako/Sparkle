@@ -1,84 +1,11 @@
-(library
- (name stack_ir)
- (modules stack_ir)
- (preprocess
-  (pps ppx_show))
- (libraries ppx_show.runtime))
+(ocamllex lex)
+
+; (menhir
+;  (modules parse)
+;  (flags --table))
+
+(ocamlyacc parse)
 
 (library
- (name llvm_ir)
- (modules llvm_ir))
-
-(library
- (name ir_cnv)
- (modules ir_cnv)
- (libraries common stack_ir ir syntactics semantics typing))
-
-(library
- (name common)
- (modules common))
-
-(library
- (name lexical)
- (modules lexical)
- (preprocess
-  (pps ppx_show))
- (libraries sexplib ppx_show.runtime))
-
-(ocamllex lexer)
-
-(library
- (name lexer)
- (modules lexer)
- (libraries lexical))
-
-(library
- (name syntactics)
- (modules syntactics)
- (preprocess
-  (pps ppx_show))
- (libraries common lexical typing ppx_show.runtime))
-
-(menhir
- (modules parser)
- (flags --dump --external-tokens=Lexical.Token --table)
- (infer true))
-
-(library
- (name parser)
- (modules parser)
- (libraries common lexical syntactics menhirLib))
-
-(library
- (name parse)
- (modules parse)
- (libraries parser lexer common lexical syntactics LR_errors))
-
-(library
- (name LR_errors)
- (modules LR_errors))
-
-(library
- (name typing)
- (modules typing)
- (preprocess
-  (pps ppx_show))
- (libraries common ppx_show.runtime))
-
-(library
- (name semantics)
- (modules semantics)
- (preprocess
-  (pps ppx_show))
- (libraries syntactics typing ppx_show.runtime ir))
-
-(library
- (name ir)
- (modules ir)
- (preprocess
-  (pps ppx_show))
- (libraries common syntactics ppx_show.runtime))
-
-(library
- (name machine)
- (modules machine))
+ (name mmips)
+ (libraries menhirLib))
